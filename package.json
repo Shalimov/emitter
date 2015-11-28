@@ -1,0 +1,20 @@
+{
+  "name": "emitter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "event-emitter.js",
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {
+    "mocha": "^2.3.3",
+    "should": "^7.1.1",
+    "sinon": "^1.17.2"
+  },
+  "scripts": {
+    "test": "mocha",
+    "upDocs": "jsdoc2md mediator.js > README.md && git add . && git commit -am 'Updated Readme.md' && git push origin master"
+  },
+  "author": "",
+  "license": "ISC"
+}
