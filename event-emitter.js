@@ -39,14 +39,28 @@
     }
   };
 
-  function EventEmitter() {
+  function EventEmitter(settings) {
+    settings = settings || {};
+
     this._events = {};
     this._handlers = {};
+    this._currentListenersCount = 0;
+    this._maxListeners = 30;
+    this._logger = settings.logger || console;
   }
 
   _.extend(EventEmitter.prototype, {
-    on: function (eventName, handler) {
+    get maxListeners() {
+      return this._maxListeners;
+    },
 
+    set maxListeners(listenersCount) {
+      if (listenersCount > 0) {
+        this._maxListeners = listenersCount;
+      }
+    },
+
+    on: function (eventName, handler) {
       if (typeof eventName !== 'string' || typeof handler !== 'function') {
         throw new Error('First param should be a String, Second parameter should be an function');
       }
@@ -55,11 +69,25 @@
 
       if (this._events.hasOwnProperty(eventName) && !this._handlers.hasOwnProperty(hash)) {
         this._events[eventName].push(hash);
+        this._currentListenersCount++;
       } else if (!this._handlers.hasOwnProperty(hash)) {
         this._events[eventName] = [hash];
+        this._currentListenersCount++;
       }
 
       this._handlers[hash] = handler;
+
+      if (this._currentListenersCount > this._maxListeners) {
+        this._logger.warn('Warning! Detected [' + this._currentListenersCount + '] more than [' + this._maxListeners + '] registered event listeners.');
+      }
+    },
+
+    onSeveral: function (eventList, handler) {
+      if (Array.isArray(eventList)) {
+        _.each(eventList, function (event) {
+          this.on(event, handler);
+        }, this);
+      }
     },
 
     once: function (eventName, handler) {
@@ -87,9 +115,11 @@
         var handlerIndex = this._events[eventName].indexOf(hash);
         this._events[eventName].splice(handlerIndex, 1);
 
+        this._currentListenersCount--;
         delete this._handlers[hash];
       } else {
-        this._events[eventName].forEach(function (hash) {
+        _.each(this._events[eventName], function (hash) {
+          this._currentListenersCount--;
           delete this._handlers[hash];
         }, this);
 
@@ -97,12 +127,33 @@
       }
     },
 
+    offSeveral: function (eventList, handler) {
+      if (Array.isArray(eventList)) {
+        _.each(eventList, function (event) {
+          this.off(event, handler);
+        }, this);
+      }
+    },
+
     emit: function (eventName) {
       if (this._events.hasOwnProperty(eventName)) {
         var args = Array.prototype.slice.call(arguments, 1);
 
-        this._events[eventName].forEach(function (hash) {
+        _.each(this._events[eventName], function (hash) {
           this._handlers[hash].apply(null, args);
+        }, this);
+      }
+    },
+
+    emitSeveral: function (eventList) {
+      if (Array.isArray(eventList)) {
+        var args = Array.prototype.slice.call(arguments, 1);
+
+        _.each(eventList, function (eventName) {
+          var innerArgs = [eventName];
+          innerArgs.push.apply(innerArgs, args);
+
+          this.emit.apply(this, innerArgs);
         }, this);
       }
     },

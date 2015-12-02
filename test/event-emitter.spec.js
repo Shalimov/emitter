@@ -25,7 +25,6 @@ describe('EventEmitter spec', function () {
     spyHandler.calledTwice.should.be.True();
   });
 
-
   it('should register event by using #on, triggers event with args by using #emit and unregister event by #off', function () {
     eventEmitter.on('some:event', spyHandler);
     eventEmitter.emit('some:event', ['args1', 'args2'], {key: 'value'});
@@ -41,7 +40,6 @@ describe('EventEmitter spec', function () {
     spyHandler.calledTwice.should.be.True();
   });
 
-
   it('should register event for only one-time invocation by using #once, triggers event by using #emit and check invocation by #emit again', function () {
     eventEmitter.once('some:event', spyHandler);
     spyHandler.called.should.be.False();
@@ -51,10 +49,6 @@ describe('EventEmitter spec', function () {
 
     eventEmitter.emit('some:event');
     spyHandler.calledOnce.should.be.True();
-  });
-
-  it('should override #toString and #toString should return [object EventEmitter]', function () {
-    eventEmitter.toString().should.be.eql('[object EventEmitter]');
   });
 
   it('should prevent registration the same function per one event more than one time', function () {
@@ -69,5 +63,56 @@ describe('EventEmitter spec', function () {
 
     eventEmitter.emit('some:event');
     spyHandler.calledTwice.should.be.True();
+  });
+
+  it('should provide ability to register handler on several events', function () {
+    eventEmitter.onSeveral(['event1', 'event2', 'event3'], spyHandler);
+
+    spyHandler.called.should.be.False();
+
+    eventEmitter.emit('event1');
+    spyHandler.calledOnce.should.be.True();
+
+    eventEmitter.emit('event2');
+    spyHandler.calledTwice.should.be.True();
+
+    eventEmitter.emit('event3');
+    spyHandler.calledThrice.should.be.True();
+  });
+
+  it('should provide ability to trigger several events simultaneously', function () {
+    eventEmitter.onSeveral(['event1', 'event2', 'event3'], spyHandler);
+
+    spyHandler.called.should.be.False();
+
+    eventEmitter.emitSeveral(['event1', 'event2', 'event3'], 'Hello', 'World');
+
+    spyHandler.getCall(0).args.should.match(['Hello', 'World']);
+    spyHandler.getCall(1).args.should.match(['Hello', 'World']);
+    spyHandler.getCall(2).args.should.match(['Hello', 'World']);
+
+    spyHandler.calledThrice.should.be.True();
+  });
+
+  it('should provide ability to unsubscribe from several events', function () {
+    eventEmitter.onSeveral(['event1', 'event2', 'event3'], spyHandler);
+
+    eventEmitter.emit('event1');
+    eventEmitter.emit('event2');
+    eventEmitter.emit('event3');
+
+    spyHandler.calledThrice.should.be.True();
+
+    eventEmitter.offSeveral(['event1', 'event2', 'event3']);
+
+    eventEmitter.emit('event1');
+    eventEmitter.emit('event2');
+    eventEmitter.emit('event3');
+
+    spyHandler.calledThrice.should.be.True();
+  });
+
+  it('should override #toString and #toString should return [object EventEmitter]', function () {
+    eventEmitter.toString().should.be.eql('[object EventEmitter]');
   });
 });
