@@ -1,6 +1,12 @@
 (function () {
   'use strict';
 
+  function checkArgs(str, fn) {
+    if (typeof str !== 'string' || typeof fn !== 'function') {
+      throw new Error('First param should be a String, Second parameter should be an function');
+    }
+  }
+
   var _ = {
     each: function (collection, iterator, ctx) {
       var i, length;
@@ -29,74 +35,139 @@
       });
     },
 
-    hash: function (text) {
-      return text.split("").reduce(this.symbolHash, 0);
+    indexOf: function (collection, iterator) {
+      var index = -1;
+
+      this.each(collection, function (val, i, coll) {
+        if (iterator(val, i, coll)) {
+          index = i;
+          return true;
+        }
+      });
+
+      return index;
     },
 
-    symbolHash: function (a, b) {
-      a = ((a << 5) - a) + b.charCodeAt(0);
-      return a & a;
+    contains: function (str, substr) {
+      return !!~str.indexOf(substr);
+    },
+
+    arrayCopy: function (array) {
+      return Array.prototype.slice.call(array);
+    },
+
+    notGroup: function (meta) {
+      return meta.group !== this;
     }
   };
 
   function EventEmitter(settings) {
     settings = settings || {};
 
-    this._events = {};
-    this._handlers = {};
-    this._currentListenersCount = 0;
-    this._maxListeners = 30;
+    this._groups = {};
+    this._eventMap = {};
+    this._registredListenersCount = 0;
+    this._maxListeners = settings.maxListeners || 20;
     this._logger = settings.logger || console;
   }
 
   _.extend(EventEmitter.prototype, {
-    get maxListeners() {
-      return this._maxListeners;
+    _offEventGroup: function (event, group) {
+      var beforeLength = this._eventMap[event].length;
+      this._eventMap[event] = this._eventMap[event].filter(_.notGroup, group);
+      var afterLength = this._eventMap[event].length;
+
+      var indexEvent = this._groups[group].indexOf(event);
+      this._groups[group].splice(indexEvent, 1);
+
+      this._registredListenersCount -= beforeLength - afterLength;
     },
 
-    set maxListeners(listenersCount) {
-      if (listenersCount > 0) {
-        this._maxListeners = listenersCount;
+    _offGroup: function (group) {
+      var groupEvents = _.arrayCopy(this._groups[group]);
+
+      groupEvents.forEach(function (event) {
+        this._offEventGroup(event, group);
+      }, this);
+
+      delete this._groups[group];
+    },
+
+    _off: function (event, handler) {
+      if (typeof handler === 'function') {
+        var handlerIndex = _.indexOf(this._eventMap[event], function (meta) {
+          return meta.handler === handler;
+        });
+
+        if (~handlerIndex) {
+          this._eventMap[event].splice(handlerIndex, 1);
+        }
+        this._registredListenersCount--;
+      } else {
+        var length = this._eventMap[event];
+
+        this._registredListenersCount -= length;
+        delete this._eventMap[event];
       }
-    },
+    }
+  });
 
+  _.extend(EventEmitter.prototype, {
     on: function (eventName, handler) {
-      if (typeof eventName !== 'string' || typeof handler !== 'function') {
-        throw new Error('First param should be a String, Second parameter should be an function');
+      checkArgs(eventName, handler);
+      var eventMap = this._eventMap;
+      var group;
+
+      if (_.contains(eventName, '.')) {
+        var splitted = eventName.split('.');
+        var groups = this._groups;
+        group = splitted[1];
+        eventName = splitted[0];
+
+        if (groups[group]) {
+          groups[group].push(eventName);
+        } else {
+          groups[group] = [eventName];
+        }
       }
 
-      var hash = _.hash(eventName + handler.toString());
-
-      if (this._events.hasOwnProperty(eventName) && !this._handlers.hasOwnProperty(hash)) {
-        this._events[eventName].push(hash);
-        this._currentListenersCount++;
-      } else if (!this._handlers.hasOwnProperty(hash)) {
-        this._events[eventName] = [hash];
-        this._currentListenersCount++;
+      if (eventMap[eventName]) {
+        eventMap[eventName].push({
+          group: group,
+          handler: handler
+        });
+      } else {
+        eventMap[eventName] = [{
+          group: group,
+          handler: handler
+        }];
       }
 
-      this._handlers[hash] = handler;
-
-      if (this._currentListenersCount > this._maxListeners) {
-        this._logger.warn('Warning! Detected [' + this._currentListenersCount + '] more than [' + this._maxListeners + '] registered event listeners.');
-      }
+      this._registredListenersCount++;
     },
 
-    onSeveral: function (eventList, handler) {
-      if (Array.isArray(eventList)) {
-        _.each(eventList, function (event) {
-          this.on(event, handler);
-        }, this);
+    off: function (eventName, handler) {
+      var group;
+
+      if (_.contains(eventName, '.')) {
+        var splitted = eventName.split('.');
+        eventName = splitted[0];
+        group = splitted[1];
+      }
+
+      if (eventName && group) {
+        this._offEventGroup(eventName, group);
+      } else if (group) {
+        this._offGroup(group);
+      } else {
+        this._off(eventName, handler);
       }
     },
 
     once: function (eventName, handler) {
+      checkArgs(eventName, handler);
+
       var self = this;
-
-      if (typeof eventName !== 'string' || typeof handler !== 'function') {
-        throw new Error('First param should be a String, Second parameter should be an function');
-      }
-
       self.on(eventName, decorator);
 
       function decorator() {
@@ -108,22 +179,38 @@
       }
     },
 
-    off: function (eventName, handler) {
-      if (handler) {
-        var hash = _.hash(eventName + handler.toString());
+    emit: function (eventName) {
+      if (this._eventMap[eventName]) {
+        var args = Array.prototype.slice.call(arguments, 1);
 
-        var handlerIndex = this._events[eventName].indexOf(hash);
-        this._events[eventName].splice(handlerIndex, 1);
-
-        this._currentListenersCount--;
-        delete this._handlers[hash];
-      } else {
-        _.each(this._events[eventName], function (hash) {
-          this._currentListenersCount--;
-          delete this._handlers[hash];
+        _.each(this._eventMap[eventName], function (meta) {
+          meta.handler.apply(null, args);
         }, this);
+      }
+    },
 
-        delete this._events[eventName];
+    getMaxListeners: function () {
+      return this._maxListeners;
+    },
+
+    setMaxListeners: function (listenersCount) {
+      if (listenersCount > 0) {
+        this._maxListeners = listenersCount;
+      }
+    },
+
+    toString: function () {
+      return '[object EventEmitter]';
+    }
+  });
+
+  //on several declaration
+  _.extend(EventEmitter.prototype, {
+    onSeveral: function (eventList, handler) {
+      if (Array.isArray(eventList)) {
+        _.each(eventList, function (event) {
+          this.on(event, handler);
+        }, this);
       }
     },
 
@@ -131,16 +218,6 @@
       if (Array.isArray(eventList)) {
         _.each(eventList, function (event) {
           this.off(event, handler);
-        }, this);
-      }
-    },
-
-    emit: function (eventName) {
-      if (this._events.hasOwnProperty(eventName)) {
-        var args = Array.prototype.slice.call(arguments, 1);
-
-        _.each(this._events[eventName], function (hash) {
-          this._handlers[hash].apply(null, args);
         }, this);
       }
     },
@@ -156,10 +233,6 @@
           this.emit.apply(this, innerArgs);
         }, this);
       }
-    },
-
-    toString: function () {
-      return '[object EventEmitter]';
     }
   });
 

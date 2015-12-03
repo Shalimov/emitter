@@ -51,19 +51,6 @@ describe('EventEmitter spec', function () {
     spyHandler.calledOnce.should.be.True();
   });
 
-  it('should prevent registration the same function per one event more than one time', function () {
-    eventEmitter.on('some:event', spyHandler);
-    eventEmitter.on('some:event', spyHandler);
-    eventEmitter.on('some:event', spyHandler);
-
-    eventEmitter.emit('some:event');
-    spyHandler.calledOnce.should.be.True();
-
-    eventEmitter.on('some:event', spyHandler);
-
-    eventEmitter.emit('some:event');
-    spyHandler.calledTwice.should.be.True();
-  });
 
   it('should provide ability to register handler on several events', function () {
     eventEmitter.onSeveral(['event1', 'event2', 'event3'], spyHandler);
@@ -109,6 +96,40 @@ describe('EventEmitter spec', function () {
     eventEmitter.emit('event2');
     eventEmitter.emit('event3');
 
+    spyHandler.calledThrice.should.be.True();
+  });
+
+  it('should have ability register and regmove group of events', function () {
+    eventEmitter.on('event.repeater', spyHandler);
+    eventEmitter.on('event2.repeater', spyHandler);
+
+    eventEmitter.emit('event');
+    spyHandler.calledOnce.should.be.True();
+
+    eventEmitter.emit('event2');
+    spyHandler.calledTwice.should.be.True();
+
+    eventEmitter.off('.repeater');
+
+    eventEmitter.emit('event');
+    eventEmitter.emit('event2');
+    spyHandler.calledTwice.should.be.True();
+  });
+
+  it('should have ability register and regmove group of events', function () {
+    eventEmitter.on('event.repeater', spyHandler);
+    eventEmitter.on('event.repeater', spyHandler);
+    eventEmitter.on('event2.repeater', spyHandler);
+
+    eventEmitter.emit('event');
+    spyHandler.calledTwice.should.be.True();
+
+    eventEmitter.off('event.repeater');
+
+    eventEmitter.emit('event');
+    spyHandler.calledTwice.should.be.True();
+
+    eventEmitter.emit('event2');
     spyHandler.calledThrice.should.be.True();
   });
 
