@@ -1,4 +1,4 @@
-# Simple EventEmitter for your FE application
+# Simple EventEmitter for your FE
 
 ## How to install
 ```bower install emitter```
