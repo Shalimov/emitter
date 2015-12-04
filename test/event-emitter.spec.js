@@ -53,7 +53,7 @@ describe('EventEmitter spec', function () {
 
 
   it('should provide ability to register handler on several events', function () {
-    eventEmitter.onSeveral(['event1', 'event2', 'event3'], spyHandler);
+    eventEmitter.on(['event1', 'event2', 'event3'], spyHandler);
 
     spyHandler.called.should.be.False();
 
@@ -67,22 +67,8 @@ describe('EventEmitter spec', function () {
     spyHandler.calledThrice.should.be.True();
   });
 
-  it('should provide ability to trigger several events simultaneously', function () {
-    eventEmitter.onSeveral(['event1', 'event2', 'event3'], spyHandler);
-
-    spyHandler.called.should.be.False();
-
-    eventEmitter.emitSeveral(['event1', 'event2', 'event3'], 'Hello', 'World');
-
-    spyHandler.getCall(0).args.should.match(['Hello', 'World']);
-    spyHandler.getCall(1).args.should.match(['Hello', 'World']);
-    spyHandler.getCall(2).args.should.match(['Hello', 'World']);
-
-    spyHandler.calledThrice.should.be.True();
-  });
-
   it('should provide ability to unsubscribe from several events', function () {
-    eventEmitter.onSeveral(['event1', 'event2', 'event3'], spyHandler);
+    eventEmitter.on(['event1', 'event2', 'event3'], spyHandler);
 
     eventEmitter.emit('event1');
     eventEmitter.emit('event2');
@@ -90,7 +76,7 @@ describe('EventEmitter spec', function () {
 
     spyHandler.calledThrice.should.be.True();
 
-    eventEmitter.offSeveral(['event1', 'event2', 'event3']);
+    eventEmitter.off(['event1', 'event2', 'event3']);
 
     eventEmitter.emit('event1');
     eventEmitter.emit('event2');
@@ -99,7 +85,7 @@ describe('EventEmitter spec', function () {
     spyHandler.calledThrice.should.be.True();
   });
 
-  it('should have ability register and regmove group of events', function () {
+  it('should have ability register and remove group of events', function () {
     eventEmitter.on('event.repeater', spyHandler);
     eventEmitter.on('event2.repeater', spyHandler);
 
@@ -116,7 +102,7 @@ describe('EventEmitter spec', function () {
     spyHandler.calledTwice.should.be.True();
   });
 
-  it('should have ability register and regmove group of events', function () {
+  it('should have ability register and remove event by using special group', function () {
     eventEmitter.on('event.repeater', spyHandler);
     eventEmitter.on('event.repeater', spyHandler);
     eventEmitter.on('event2.repeater', spyHandler);

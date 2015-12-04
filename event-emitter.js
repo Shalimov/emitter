@@ -79,6 +79,57 @@
   }
 
   _.extend(EventEmitter.prototype, {
+    _on: function (eventName, handler) {
+      checkArgs(eventName, handler);
+      var eventMap = this._eventMap;
+      var group;
+
+      if (_.contains(eventName, '.')) {
+        var splitted = eventName.split('.');
+        var groups = this._groups;
+        group = splitted[1];
+        eventName = splitted[0];
+
+        if (groups[group]) {
+          groups[group].push(eventName);
+        } else {
+          groups[group] = [eventName];
+        }
+      }
+
+      if (eventMap[eventName]) {
+        eventMap[eventName].push({
+          group: group,
+          handler: handler
+        });
+      } else {
+        eventMap[eventName] = [{
+          group: group,
+          handler: handler
+        }];
+      }
+
+      this._registredListenersCount++;
+    },
+
+    _off: function (eventName, handler) {
+      var group;
+
+      if (_.contains(eventName, '.')) {
+        var splitted = eventName.split('.');
+        eventName = splitted[0];
+        group = splitted[1];
+      }
+
+      if (eventName && group) {
+        this._offEventGroup(eventName, group);
+      } else if (group) {
+        this._offGroup(group);
+      } else {
+        this._offEvent(eventName, handler);
+      }
+    },
+
     _offEventGroup: function (event, group) {
       var beforeLength = this._eventMap[event].length;
       this._eventMap[event] = this._eventMap[event].filter(_.notGroup, group);
@@ -100,7 +151,7 @@
       delete this._groups[group];
     },
 
-    _off: function (event, handler) {
+    _offEvent: function (event, handler) {
       if (typeof handler === 'function') {
         var handlerIndex = _.indexOf(this._eventMap[event], function (meta) {
           return meta.handler === handler;
@@ -128,83 +179,50 @@
       /**
        * Method provide ability to subscribe on some event by name and react on it by handler
        * @method
-       * @param {string} eventName
+       * @param {string|Array} eventNameList
        * @param {function} handler
        */
-      on: function (eventName, handler) {
-        checkArgs(eventName, handler);
-        var eventMap = this._eventMap;
-        var group;
-
-        if (_.contains(eventName, '.')) {
-          var splitted = eventName.split('.');
-          var groups = this._groups;
-          group = splitted[1];
-          eventName = splitted[0];
-
-          if (groups[group]) {
-            groups[group].push(eventName);
-          } else {
-            groups[group] = [eventName];
-          }
-        }
-
-        if (eventMap[eventName]) {
-          eventMap[eventName].push({
-            group: group,
-            handler: handler
-          });
+      on: function (eventNameList, handler) {
+        if (Array.isArray(eventNameList)) {
+          _.each(eventNameList, function (event) {
+            this._on(event, handler);
+          }, this);
         } else {
-          eventMap[eventName] = [{
-            group: group,
-            handler: handler
-          }];
+          this._on(eventNameList, handler);
         }
-
-        this._registredListenersCount++;
       },
 
       /**
        * Method allows to remove subscription for specify handler of all event if handler is not defined
        * @method
-       * @param {string} eventName
+       * @param {string|Array} evenNameList
        * @param {function} [handler]
        */
-      off: function (eventName, handler) {
-        var group;
-
-        if (_.contains(eventName, '.')) {
-          var splitted = eventName.split('.');
-          eventName = splitted[0];
-          group = splitted[1];
-        }
-
-        if (eventName && group) {
-          this._offEventGroup(eventName, group);
-        } else if (group) {
-          this._offGroup(group);
+      off: function (eventNameList, handler) {
+        if (Array.isArray(eventNameList)) {
+          _.each(eventNameList, function (event) {
+            this._off(event, handler);
+          }, this);
         } else {
-          this._off(eventName, handler);
+          this._off(eventNameList, handler);
         }
       },
 
       /**
        * Method allows to subscribe on some event and unsubscribe automatically after event will happen
        * @method
-       * @param {string} eventName
+       * @param {string|Array} eventNameList
        * @param {function} handler
        */
-      once: function (eventName, handler) {
-        checkArgs(eventName, handler);
-
+      once: function (eventNameList, handler) {
         var self = this;
-        self.on(eventName, decorator);
+        self.on(eventNameList, decorator);
 
         function decorator() {
           try {
             handler.apply(this, arguments);
           } finally {
-            self.off(eventName, decorator);
+            self.off(eventNameList, decorator);
           }
         }
       },
@@ -247,61 +265,6 @@
 
       toString: function () {
         return '[object EventEmitter]';
-      }
-    });
-
-  //on several declaration
-  _.extend(EventEmitter.prototype,
-    /**
-     * @lends EventEmitter.prototype
-     * @memberof global
-     */
-    {
-      /**
-       * Method provide ability to subscribe one handler on several event
-       * @method
-       * @param {Array} eventList
-       * @param {function} handler
-       */
-      onSeveral: function (eventList, handler) {
-        if (Array.isArray(eventList)) {
-          _.each(eventList, function (event) {
-            this.on(event, handler);
-          }, this);
-        }
-      },
-
-      /**
-       * Method allows to remove subscription from several events (second parameter handler)
-       * @method
-       * @param {Array} eventList
-       * @param {function} [handler]
-       */
-      offSeveral: function (eventList, handler) {
-        if (Array.isArray(eventList)) {
-          _.each(eventList, function (event) {
-            this.off(event, handler);
-          }, this);
-        }
-      },
-
-      /**
-       * Method allows to trigger all handler which are subscribed on several events and also pass any number of arguments
-       * @method
-       * @param {string} eventName
-       * @param {arguments} List of arguments
-       */
-      emitSeveral: function (eventList) {
-        if (Array.isArray(eventList)) {
-          var args = Array.prototype.slice.call(arguments, 1);
-
-          _.each(eventList, function (eventName) {
-            var innerArgs = [eventName];
-            innerArgs.push.apply(innerArgs, args);
-
-            this.emit.apply(this, innerArgs);
-          }, this);
-        }
       }
     });
 
