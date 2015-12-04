@@ -13,7 +13,7 @@
   },
   "scripts": {
     "test": "mocha",
-    "upDocs": "jsdoc2md mediator.js > README.md && git add . && git commit -am 'Updated Readme.md' && git push origin master"
+    "upDocs": "jsdoc2md event-emitter.js > README.md && git add . && git commit -am 'Updated Readme.md' && git push origin master"
   },
   "author": "",
   "license": "ISC"

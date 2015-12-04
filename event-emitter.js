@@ -1,4 +1,5 @@
-(function () {
+/** @namespace global */
+(function (global) {
   'use strict';
 
   function checkArgs(str, fn) {
@@ -61,6 +62,12 @@
     }
   };
 
+  /**
+   * EventEmitter - provides event-driven system
+   * @class
+   * @constructor
+   * @memberof global
+   */
   function EventEmitter(settings) {
     settings = settings || {};
 
@@ -112,135 +119,199 @@
     }
   });
 
-  _.extend(EventEmitter.prototype, {
-    on: function (eventName, handler) {
-      checkArgs(eventName, handler);
-      var eventMap = this._eventMap;
-      var group;
+  _.extend(EventEmitter.prototype,
+    /**
+     * @lends EventEmitter.prototype
+     * @memberof global
+     */
+    {
+      /**
+       * Method provide ability to subscribe on some event by name and react on it by handler
+       * @method
+       * @param {string} eventName
+       * @param {function} handler
+       */
+      on: function (eventName, handler) {
+        checkArgs(eventName, handler);
+        var eventMap = this._eventMap;
+        var group;
 
-      if (_.contains(eventName, '.')) {
-        var splitted = eventName.split('.');
-        var groups = this._groups;
-        group = splitted[1];
-        eventName = splitted[0];
+        if (_.contains(eventName, '.')) {
+          var splitted = eventName.split('.');
+          var groups = this._groups;
+          group = splitted[1];
+          eventName = splitted[0];
 
-        if (groups[group]) {
-          groups[group].push(eventName);
+          if (groups[group]) {
+            groups[group].push(eventName);
+          } else {
+            groups[group] = [eventName];
+          }
+        }
+
+        if (eventMap[eventName]) {
+          eventMap[eventName].push({
+            group: group,
+            handler: handler
+          });
         } else {
-          groups[group] = [eventName];
+          eventMap[eventName] = [{
+            group: group,
+            handler: handler
+          }];
         }
-      }
 
-      if (eventMap[eventName]) {
-        eventMap[eventName].push({
-          group: group,
-          handler: handler
-        });
-      } else {
-        eventMap[eventName] = [{
-          group: group,
-          handler: handler
-        }];
-      }
+        this._registredListenersCount++;
+      },
 
-      this._registredListenersCount++;
-    },
+      /**
+       * Method allows to remove subscription for specify handler of all event if handler is not defined
+       * @method
+       * @param {string} eventName
+       * @param {function} [handler]
+       */
+      off: function (eventName, handler) {
+        var group;
 
-    off: function (eventName, handler) {
-      var group;
-
-      if (_.contains(eventName, '.')) {
-        var splitted = eventName.split('.');
-        eventName = splitted[0];
-        group = splitted[1];
-      }
-
-      if (eventName && group) {
-        this._offEventGroup(eventName, group);
-      } else if (group) {
-        this._offGroup(group);
-      } else {
-        this._off(eventName, handler);
-      }
-    },
-
-    once: function (eventName, handler) {
-      checkArgs(eventName, handler);
-
-      var self = this;
-      self.on(eventName, decorator);
-
-      function decorator() {
-        try {
-          handler.apply(this, arguments);
-        } finally {
-          self.off(eventName, decorator);
+        if (_.contains(eventName, '.')) {
+          var splitted = eventName.split('.');
+          eventName = splitted[0];
+          group = splitted[1];
         }
+
+        if (eventName && group) {
+          this._offEventGroup(eventName, group);
+        } else if (group) {
+          this._offGroup(group);
+        } else {
+          this._off(eventName, handler);
+        }
+      },
+
+      /**
+       * Method allows to subscribe on some event and unsubscribe automatically after event will happen
+       * @method
+       * @param {string} eventName
+       * @param {function} handler
+       */
+      once: function (eventName, handler) {
+        checkArgs(eventName, handler);
+
+        var self = this;
+        self.on(eventName, decorator);
+
+        function decorator() {
+          try {
+            handler.apply(this, arguments);
+          } finally {
+            self.off(eventName, decorator);
+          }
+        }
+      },
+
+      /**
+       * Method allows to trigger all handler which are subscribed on some event and also pass any number of arguments
+       * @method
+       * @param {string} eventName
+       * @param {arguments} List of arguments
+       */
+      emit: function (eventName) {
+        if (this._eventMap[eventName]) {
+          var args = Array.prototype.slice.call(arguments, 1);
+
+          _.each(this._eventMap[eventName], function (meta) {
+            meta.handler.apply(null, args);
+          }, this);
+        }
+      },
+
+      /**
+       * Method allows to get max listeners count
+       * @method
+       * @returns {number} Returns max listeners count
+       */
+      getMaxListeners: function () {
+        return this._maxListeners;
+      },
+
+      /**
+       * Method allows to set max listeners count
+       * @method
+       * @param {number} number of max listeners count
+       */
+      setMaxListeners: function (listenersCount) {
+        if (listenersCount > 0) {
+          this._maxListeners = listenersCount;
+        }
+      },
+
+      toString: function () {
+        return '[object EventEmitter]';
       }
-    },
-
-    emit: function (eventName) {
-      if (this._eventMap[eventName]) {
-        var args = Array.prototype.slice.call(arguments, 1);
-
-        _.each(this._eventMap[eventName], function (meta) {
-          meta.handler.apply(null, args);
-        }, this);
-      }
-    },
-
-    getMaxListeners: function () {
-      return this._maxListeners;
-    },
-
-    setMaxListeners: function (listenersCount) {
-      if (listenersCount > 0) {
-        this._maxListeners = listenersCount;
-      }
-    },
-
-    toString: function () {
-      return '[object EventEmitter]';
-    }
-  });
+    });
 
   //on several declaration
-  _.extend(EventEmitter.prototype, {
-    onSeveral: function (eventList, handler) {
-      if (Array.isArray(eventList)) {
-        _.each(eventList, function (event) {
-          this.on(event, handler);
-        }, this);
+  _.extend(EventEmitter.prototype,
+    /**
+     * @lends EventEmitter.prototype
+     * @memberof global
+     */
+    {
+      /**
+       * Method provide ability to subscribe one handler on several event
+       * @method
+       * @param {Array} eventList
+       * @param {function} handler
+       */
+      onSeveral: function (eventList, handler) {
+        if (Array.isArray(eventList)) {
+          _.each(eventList, function (event) {
+            this.on(event, handler);
+          }, this);
+        }
+      },
+
+      /**
+       * Method allows to remove subscription from several events (second parameter handler)
+       * @method
+       * @param {Array} eventList
+       * @param {function} [handler]
+       */
+      offSeveral: function (eventList, handler) {
+        if (Array.isArray(eventList)) {
+          _.each(eventList, function (event) {
+            this.off(event, handler);
+          }, this);
+        }
+      },
+
+      /**
+       * Method allows to trigger all handler which are subscribed on several events and also pass any number of arguments
+       * @method
+       * @param {string} eventName
+       * @param {arguments} List of arguments
+       */
+      emitSeveral: function (eventList) {
+        if (Array.isArray(eventList)) {
+          var args = Array.prototype.slice.call(arguments, 1);
+
+          _.each(eventList, function (eventName) {
+            var innerArgs = [eventName];
+            innerArgs.push.apply(innerArgs, args);
+
+            this.emit.apply(this, innerArgs);
+          }, this);
+        }
       }
-    },
-
-    offSeveral: function (eventList, handler) {
-      if (Array.isArray(eventList)) {
-        _.each(eventList, function (event) {
-          this.off(event, handler);
-        }, this);
-      }
-    },
-
-    emitSeveral: function (eventList) {
-      if (Array.isArray(eventList)) {
-        var args = Array.prototype.slice.call(arguments, 1);
-
-        _.each(eventList, function (eventName) {
-          var innerArgs = [eventName];
-          innerArgs.push.apply(innerArgs, args);
-
-          this.emit.apply(this, innerArgs);
-        }, this);
-      }
-    }
-  });
+    });
 
   if (typeof module !== undefined) {
     module.exports = EventEmitter;
   } else if (typeof exports !== undefined) {
     exports.EventEmitter = EventEmitter;
   } else {
-    this.EventEmitter = EventEmitter;
+    global.EventEmitter = EventEmitter;
   }
-})();
+})((function () {
+  return this;
+})());
