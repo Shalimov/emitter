@@ -1,5 +1,8 @@
 # EventEmitter
 
+
+## Install
+``` bower install emitter```
 ## What for?
 It's a simple implementation of event emitter that helps you to implement observers in your application.
 This implementation also provide ability to classify event and split them by several groups.
