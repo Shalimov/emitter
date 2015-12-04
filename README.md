@@ -1,5 +1,8 @@
 # EventEmitter
 
+## What for?
+It's a simple implementation of event emitter that helps you to implement observers in your application.
+This implementation also provide ability to classify event and split them by several groups.
 
 * [EventEmitter](#global.EventEmitter)
   * [new EventEmitter()](#new_global.EventEmitter_new)
@@ -7,7 +10,7 @@
   * [.off(evenNameList, [handler])](#global.EventEmitter+off)
   * [.once(eventNameList, handler)](#global.EventEmitter+once)
   * [.emit(eventName, List)](#global.EventEmitter+emit)
-  * [.getMaxListeners()](#global.EventEmitter+getMaxListeners) ⇒ <code>number</code>
+  * [.getMaxListeners()](#global.EventEmitter+getMaxListeners)
   * [.setMaxListeners(number)](#global.EventEmitter+setMaxListeners)
 
 <a name="new_global.EventEmitter_new"></a>
@@ -16,7 +19,7 @@ EventEmitter - provides event-driven system
 
 <a name="global.EventEmitter+on"></a>
 #### eventEmitter.on(eventNameList, handler)
-Method provide ability to subscribe on some event by name and react on it by handler
+Method provide ability to subscribe on some event(s) by name and react on it(them) by handler
 
 **Kind**: instance method of <code>[EventEmitter](#global.EventEmitter)</code>  
 
@@ -27,7 +30,7 @@ Method provide ability to subscribe on some event by name and react on it by han
 
 <a name="global.EventEmitter+off"></a>
 #### eventEmitter.off(evenNameList, [handler])
-Method allows to remove subscription for specify handler of all event if handler is not defined
+Method allows to remove events from eventEmitter by eventName, eventName.group, .group, eventNameList
 
 **Kind**: instance method of <code>[EventEmitter](#global.EventEmitter)</code>  
 
@@ -38,7 +41,7 @@ Method allows to remove subscription for specify handler of all event if handler
 
 <a name="global.EventEmitter+once"></a>
 #### eventEmitter.once(eventNameList, handler)
-Method allows to subscribe on some event and unsubscribe automatically after event will happen
+Methods allows you to subscribe on some event(s) and remove subscription automatically after event(s) will happen
 
 **Kind**: instance method of <code>[EventEmitter](#global.EventEmitter)</code>  
 
@@ -59,7 +62,7 @@ Method allows to trigger all handler which are subscribed on some event and also
 | List | <code>arguments</code> | of arguments |
 
 <a name="global.EventEmitter+getMaxListeners"></a>
-#### eventEmitter.getMaxListeners() ⇒ <code>number</code>
+#### eventEmitter.getMaxListeners()
 Method allows to get max listeners count
 
 **Kind**: instance method of <code>[EventEmitter](#global.EventEmitter)</code>  
