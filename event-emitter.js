@@ -231,7 +231,7 @@
        * Method allows to trigger all handler which are subscribed on some event and also pass any number of arguments
        * @method
        * @param {string} eventName
-       * @param {arguments} List of arguments
+       * @param {arguments} ... List of arguments
        */
       emit: function (eventName) {
         if (this._eventMap[eventName]) {
@@ -255,7 +255,7 @@
       /**
        * Method allows to set max listeners count
        * @method
-       * @param {number} number of max listeners count
+       * @param {number} maxListenersCount of max listeners count
        */
       setMaxListeners: function (listenersCount) {
         if (listenersCount > 0) {

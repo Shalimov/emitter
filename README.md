@@ -8,9 +8,9 @@
     * [.on(eventNameList, handler)](#global.EventEmitter+on)
     * [.off(evenNameList, [handler])](#global.EventEmitter+off)
     * [.once(eventNameList, handler)](#global.EventEmitter+once)
-    * [.emit(eventName, List)](#global.EventEmitter+emit)
+    * [.emit(eventName, ...)](#global.EventEmitter+emit)
     * [.getMaxListeners()](#global.EventEmitter+getMaxListeners) ⇒ <code>number</code>
-    * [.setMaxListeners(number)](#global.EventEmitter+setMaxListeners)
+    * [.setMaxListeners(maxListenersCount)](#global.EventEmitter+setMaxListeners)
 
 <a name="global.EventEmitter"></a>
 ### global.EventEmitter
@@ -21,9 +21,9 @@
   * [.on(eventNameList, handler)](#global.EventEmitter+on)
   * [.off(evenNameList, [handler])](#global.EventEmitter+off)
   * [.once(eventNameList, handler)](#global.EventEmitter+once)
-  * [.emit(eventName, List)](#global.EventEmitter+emit)
+  * [.emit(eventName, ...)](#global.EventEmitter+emit)
   * [.getMaxListeners()](#global.EventEmitter+getMaxListeners) ⇒ <code>number</code>
-  * [.setMaxListeners(number)](#global.EventEmitter+setMaxListeners)
+  * [.setMaxListeners(maxListenersCount)](#global.EventEmitter+setMaxListeners)
 
 <a name="new_global.EventEmitter_new"></a>
 #### new EventEmitter()
@@ -63,7 +63,7 @@ Method allows to subscribe on some event and unsubscribe automatically after eve
 | handler | <code>function</code> | 
 
 <a name="global.EventEmitter+emit"></a>
-#### eventEmitter.emit(eventName, List)
+#### eventEmitter.emit(eventName, ...)
 Method allows to trigger all handler which are subscribed on some event and also pass any number of arguments
 
 **Kind**: instance method of <code>[EventEmitter](#global.EventEmitter)</code>  
@@ -71,7 +71,7 @@ Method allows to trigger all handler which are subscribed on some event and also
 | Param | Type | Description |
 | --- | --- | --- |
 | eventName | <code>string</code> |  |
-| List | <code>arguments</code> | of arguments |
+| ... | <code>arguments</code> | List of arguments |
 
 <a name="global.EventEmitter+getMaxListeners"></a>
 #### eventEmitter.getMaxListeners() ⇒ <code>number</code>
@@ -80,12 +80,12 @@ Method allows to get max listeners count
 **Kind**: instance method of <code>[EventEmitter](#global.EventEmitter)</code>  
 **Returns**: <code>number</code> - Returns max listeners count  
 <a name="global.EventEmitter+setMaxListeners"></a>
-#### eventEmitter.setMaxListeners(number)
+#### eventEmitter.setMaxListeners(maxListenersCount)
 Method allows to set max listeners count
 
 **Kind**: instance method of <code>[EventEmitter](#global.EventEmitter)</code>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| number | <code>number</code> | of max listeners count |
+| maxListenersCount | <code>number</code> | of max listeners count |
 
