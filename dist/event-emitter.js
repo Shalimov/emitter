@@ -1,4 +1,3 @@
-/** @namespace global */
 (function (global) {
   'use strict';
 
@@ -62,12 +61,6 @@
     }
   };
 
-  /**
-   * EventEmitter - provides event-driven system
-   * @class
-   * @constructor
-   * @memberof global
-   */
   function EventEmitter(settings) {
     settings = settings || {};
 
@@ -170,103 +163,64 @@
     }
   });
 
-  _.extend(EventEmitter.prototype,
-    /**
-     * @lends EventEmitter.prototype
-     * @memberof global
-     */
-    {
-      /**
-       * Method provide ability to subscribe on some event by name and react on it by handler
-       * @method
-       * @param {string|Array} eventNameList
-       * @param {function} handler
-       */
-      on: function (eventNameList, handler) {
-        if (Array.isArray(eventNameList)) {
-          _.each(eventNameList, function (event) {
-            this._on(event, handler);
-          }, this);
-        } else {
-          this._on(eventNameList, handler);
-        }
-      },
-
-      /**
-       * Method allows to remove subscription for specify handler of all event if handler is not defined
-       * @method
-       * @param {string|Array} evenNameList
-       * @param {function} [handler]
-       */
-      off: function (eventNameList, handler) {
-        if (Array.isArray(eventNameList)) {
-          _.each(eventNameList, function (event) {
-            this._off(event, handler);
-          }, this);
-        } else {
-          this._off(eventNameList, handler);
-        }
-      },
-
-      /**
-       * Method allows to subscribe on some event and unsubscribe automatically after event will happen
-       * @method
-       * @param {string|Array} eventNameList
-       * @param {function} handler
-       */
-      once: function (eventNameList, handler) {
-        var self = this;
-        self.on(eventNameList, decorator);
-
-        function decorator() {
-          try {
-            handler.apply(this, arguments);
-          } finally {
-            self.off(eventNameList, decorator);
-          }
-        }
-      },
-
-      /**
-       * Method allows to trigger all handler which are subscribed on some event and also pass any number of arguments
-       * @method
-       * @param {string} eventName
-       * @param {arguments} ... List of arguments
-       */
-      emit: function (eventName) {
-        if (this._eventMap[eventName]) {
-          var args = Array.prototype.slice.call(arguments, 1);
-
-          _.each(this._eventMap[eventName], function (meta) {
-            meta.handler.apply(null, args);
-          }, this);
-        }
-      },
-
-      /**
-       * Method allows to get max listeners count
-       * @method
-       * @returns {number} Returns max listeners count
-       */
-      getMaxListeners: function () {
-        return this._maxListeners;
-      },
-
-      /**
-       * Method allows to set max listeners count
-       * @method
-       * @param {number} maxListenersCount of max listeners count
-       */
-      setMaxListeners: function (listenersCount) {
-        if (listenersCount > 0) {
-          this._maxListeners = listenersCount;
-        }
-      },
-
-      toString: function () {
-        return '[object EventEmitter]';
+  _.extend(EventEmitter.prototype, {
+    on: function (eventNameList, handler) {
+      if (Array.isArray(eventNameList)) {
+        _.each(eventNameList, function (event) {
+          this._on(event, handler);
+        }, this);
+      } else {
+        this._on(eventNameList, handler);
       }
-    });
+    },
+
+    off: function (eventNameList, handler) {
+      if (Array.isArray(eventNameList)) {
+        _.each(eventNameList, function (event) {
+          this._off(event, handler);
+        }, this);
+      } else {
+        this._off(eventNameList, handler);
+      }
+    },
+
+    once: function (eventNameList, handler) {
+      var self = this;
+      self.on(eventNameList, decorator);
+
+      function decorator() {
+        try {
+          handler.apply(this, arguments);
+        } finally {
+          self.off(eventNameList, decorator);
+        }
+      }
+    },
+
+    emit: function (eventName) {
+      if (this._eventMap[eventName]) {
+        var args = Array.prototype.slice.call(arguments, 1);
+
+        _.each(this._eventMap[eventName], function (meta) {
+          meta.handler.apply(null, args);
+        }, this);
+      }
+    },
+
+    getMaxListeners: function () {
+      return this._maxListeners;
+    },
+
+    setMaxListeners: function (listenersCount) {
+      if (listenersCount > 0) {
+        this._maxListeners = listenersCount;
+      }
+    },
+
+    toString: function () {
+      return '[object EventEmitter]';
+    }
+  });
 
   if (typeof module !== undefined) {
     module.exports = EventEmitter;

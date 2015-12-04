@@ -9,6 +9,7 @@
   "devDependencies": {
     "gulp": "^3.9.0",
     "gulp-rename": "^1.2.2",
+    "gulp-strip-comments": "^1.0.1",
     "gulp-uglify": "^1.5.1",
     "mocha": "^2.3.3",
     "should": "^7.1.1",
