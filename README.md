@@ -89,6 +89,8 @@ Method allows to remove events from eventEmitter by eventName, eventName.group, 
 | evenNameList | <code>string</code> &#124; <code>Array</code> | 
 | [handler] | <code>function</code> | 
 
+### Examples: 
+
 ```javascript
 var emitter = new EventEmitter();
 
@@ -142,3 +144,4 @@ Method allows to set max listeners count
 | --- | --- | --- |
 | number | <code>number</code> | of max listeners count |
 
+## DOCS IN PROGRESS))
