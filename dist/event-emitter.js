@@ -61,7 +61,7 @@
     }
   };
 
-  function EventEmitter(settings) {
+    function EventEmitter(settings) {
     settings = settings || {};
 
     this._groups = {};
@@ -163,64 +163,65 @@
     }
   });
 
-  _.extend(EventEmitter.prototype, {
-    on: function (eventNameList, handler) {
-      if (Array.isArray(eventNameList)) {
-        _.each(eventNameList, function (event) {
-          this._on(event, handler);
-        }, this);
-      } else {
-        this._on(eventNameList, handler);
-      }
-    },
-
-    off: function (eventNameList, handler) {
-      if (Array.isArray(eventNameList)) {
-        _.each(eventNameList, function (event) {
-          this._off(event, handler);
-        }, this);
-      } else {
-        this._off(eventNameList, handler);
-      }
-    },
-
-    once: function (eventNameList, handler) {
-      var self = this;
-      self.on(eventNameList, decorator);
-
-      function decorator() {
-        try {
-          handler.apply(this, arguments);
-        } finally {
-          self.off(eventNameList, decorator);
+  _.extend(EventEmitter.prototype,
+        {
+            on: function (eventNameList, handler) {
+        if (Array.isArray(eventNameList)) {
+          _.each(eventNameList, function (event) {
+            this._on(event, handler);
+          }, this);
+        } else {
+          this._on(eventNameList, handler);
         }
+      },
+
+            off: function (eventNameList, handler) {
+        if (Array.isArray(eventNameList)) {
+          _.each(eventNameList, function (event) {
+            this._off(event, handler);
+          }, this);
+        } else {
+          this._off(eventNameList, handler);
+        }
+      },
+
+            once: function (eventNameList, handler) {
+        var self = this;
+        self.on(eventNameList, decorator);
+
+        function decorator() {
+          try {
+            handler.apply(this, arguments);
+          } finally {
+            self.off(eventNameList, decorator);
+          }
+        }
+      },
+
+            emit: function (eventName) {
+        if (this._eventMap[eventName]) {
+          var args = Array.prototype.slice.call(arguments, 1);
+
+          _.each(this._eventMap[eventName], function (meta) {
+            meta.handler.apply(null, args);
+          }, this);
+        }
+      },
+
+            getMaxListeners: function () {
+        return this._maxListeners;
+      },
+
+            setMaxListeners: function (listenersCount) {
+        if (listenersCount > 0) {
+          this._maxListeners = listenersCount;
+        }
+      },
+
+      toString: function () {
+        return '[object EventEmitter]';
       }
-    },
-
-    emit: function (eventName) {
-      if (this._eventMap[eventName]) {
-        var args = Array.prototype.slice.call(arguments, 1);
-
-        _.each(this._eventMap[eventName], function (meta) {
-          meta.handler.apply(null, args);
-        }, this);
-      }
-    },
-
-    getMaxListeners: function () {
-      return this._maxListeners;
-    },
-
-    setMaxListeners: function (listenersCount) {
-      if (listenersCount > 0) {
-        this._maxListeners = listenersCount;
-      }
-    },
-
-    toString: function () {
-      return '[object EventEmitter]';
-    }
-  });
+    });
 
   if (typeof module !== undefined) {
     module.exports = EventEmitter;

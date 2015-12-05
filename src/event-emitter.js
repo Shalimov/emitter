@@ -268,13 +268,11 @@
       }
     });
 
-  if (typeof module !== undefined) {
+  if (typeof module !== 'undefined') {
     module.exports = EventEmitter;
-  } else if (typeof exports !== undefined) {
+  } else if (typeof exports !== 'undefined') {
     exports.EventEmitter = EventEmitter;
   } else {
     global.EventEmitter = EventEmitter;
   }
-})((function () {
-  return this;
-})());
+})(new Function('return this')());

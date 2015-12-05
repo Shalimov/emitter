@@ -1,0 +1,29 @@
+{
+  "name": "is-emitter",
+  "version": "0.8.0",
+  "homepage": "https://github.com/Shalimov/emitter",
+  "authors": [
+    "Shalimov <Shalimich@gmail.com>"
+  ],
+  "description": "Event Emitter for your FE with groups",
+  "main": "dist/event-emitter.min.js",
+  "keywords": [
+    "Events",
+    "event-emitter",
+    "eventemitter",
+    "emitter",
+    "signal",
+    "fire",
+    "catch",
+    "handle",
+    "listener"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
