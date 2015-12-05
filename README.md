@@ -1,7 +1,7 @@
 # Simple EventEmitter for your FE(mb BE)
 
 ## How to install
-```bower install emitter```
+```bower install is-emitter```
 
 ## What for?
 It's a simple implementation of event emitter that helps you to implement observers in your application.
