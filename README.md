@@ -104,6 +104,30 @@ emitter.off('event2');
 
 //or this way
 emitter.off(['event1', 'event2']);
+
+//Register classified events
+emitter.on(['e1.group1', 'e2.group1', 'e3.group2', 'e4'], function () {
+ console.log('e1,e2,e3,e4');
+});
+
+//Remove all events with .group1 classifier
+emitter.off('.group1');
+
+//Remove all events with .group2 and e4
+emitter.off(['.group2', 'e4']);
+
+emitter.on('e1.class1', function () { console.log('Hello World 1'); });
+emitter.on('e1.class1', function () { console.log('Hello World 2'); });
+emitter.on('e1', function () { console.log('hello world 3'); });
+
+emitter.emit('e1');
+//'Hello World 1'
+//'Hello World 2'
+//'hello world 3'
+
+emitter.off('e1.class1');
+emitter.emit('e1');
+//'hello world 3'
 ```
 
 <a name="global.EventEmitter+once"></a>
