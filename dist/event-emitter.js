@@ -155,7 +155,7 @@
         }
         this._registredListenersCount--;
       } else {
-        var length = this._eventMap[event];
+        var length = this._eventMap[event].length;
 
         this._registredListenersCount -= length;
         delete this._eventMap[event];
