@@ -74,7 +74,7 @@ Method provide ability to subscribe on some event(s) by name and react on it(the
  emitter.emit('event2');
  //result: 'event2 or event3'
  
- emitter.emit('event2');
+ emitter.emit('event3');
  //result: 'event2 or event3'
 ```
 
