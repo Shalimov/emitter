@@ -21,4 +21,14 @@ describe('Memory consumption spec', function () {
     Object.keys(ee._groups).length.should.be.eql(0);
     ee._registredListenersCount.should.be.eql(0);
   });
+
+  it('should remove group properly when we remove event', function () {
+    ee.on('e1.group', sh);
+    ee._eventMap['e1'].length.should.be.eql(1);
+    ee._groups['group'].length.should.be.eql(1);
+
+    ee.off('e1');
+    ee._eventMap.hasOwnProperty('e1').should.be.False();
+    ee._groups['group'].indexOf('e1').should.be.eql(-1);
+  });
 });
