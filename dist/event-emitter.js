@@ -157,6 +157,15 @@
       } else {
         var length = this._eventMap[event].length;
 
+        this._eventMap[event].forEach(function (meta) {
+          if (!meta.group) return;
+
+          var group = this._groups[meta.group];
+          var eventIndex = group.indexOf(event);
+
+          group.splice(eventIndex, 1);
+        }, this);
+
         this._registredListenersCount -= length;
         delete this._eventMap[event];
       }
