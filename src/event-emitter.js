@@ -59,6 +59,10 @@
 
     notGroup: function (meta) {
       return meta.group !== this;
+    },
+
+    notEvent: function (event) {
+      return event !== this;
     }
   };
 
@@ -135,8 +139,7 @@
       this._eventMap[event] = this._eventMap[event].filter(_.notGroup, group);
       var afterLength = this._eventMap[event].length;
 
-      var indexEvent = this._groups[group].indexOf(event);
-      this._groups[group].splice(indexEvent, 1);
+      this._groups[group] = this._groups[group].filter(_.notEvent, event);
 
       this._registredListenersCount -= beforeLength - afterLength;
     },
