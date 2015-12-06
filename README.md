@@ -168,4 +168,77 @@ Method allows to set max listeners count
 | --- | --- | --- |
 | number | <code>number</code> | of max listeners count |
 
+## Angular Example
+
+```javascript
+
+(function (ng, EventEmitter) {
+ 'use strict';
+ ng.module('yourAppModule')
+  .factory('EventEmitterFactory', EventEmitterFactory)
+  .factory('GlobalEventEmitter', GlobalEventEmitter)
+  .factory('SomeServiceOfYourApp', SomeServiceOfYourApp)
+  .directive('someDirective', someDirective); 
+ 
+ function EventEmitterFactory() {
+  return {
+   create: function (settings) {
+    return new EventEmitter(settings);
+   }
+  };
+ }
+ 
+ function GlobalEventEmitter(emitterFactory) {
+  return emitterFactory.create();
+ }
+ 
+ //using with other services
+ 
+ SomeServiceOfYourApp.$inject = ['GlobalEventEmitter'];
+ function SomeServiceOfYourApp (emitter) {
+  var state = null;
+  
+  return {
+   setState: function (currState) {
+    state = currState;
+    emitter.emit('STATE_CHANGE', state);
+   },
+   
+   onStateChange: function (componentName, handler) {
+    //using group to mark registred handlers for component
+    emitter.on('STATE_CHANGE.' + componentName, handler);
+   };
+   
+   offStateChange: function (componentName) {
+    //using remove event handler according to the specific group
+    emitter.off('.' + componentName);
+   };
+  };
+ }
+ 
+ someDirective.$inject = ['SomeServiceOfYourApp'];
+ function someDirective(someService) {
+  return  {
+   restrict: 'EA',
+   link: function (scope) {
+    someService.onStateChange('myDirectiveName', function () {
+     console.log('hello world');
+    });
+    
+    someService.onStateChange('myDirectiveName', function () {
+     console.log('hello world 2');
+    });
+    
+    scope.$on('$destroy', function () {
+     //remove all handlers for this component
+     someService.offStateChange('myDirectiveName');
+    });
+   }
+  }
+ }
+ 
+})(angular, EventEmitter);
+
+```
+
 ## DOCS IN PROGRESS))
