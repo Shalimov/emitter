@@ -5,7 +5,7 @@
 
 ## What for?
 It's a simple implementation of event emitter that helps you to implement observers in your application.
-This implementation also provide ability to classify event and split them by several groups.
+This implementation also provides an ability to classify events and split them by several groups.
 
 ## Lets go:
 
