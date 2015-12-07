@@ -1,5 +1,7 @@
 # Simple EventEmitter for your FE(mb BE)
 
+<a class="jsbin-embed" href="http://jsbin.com/xezuvowozo/embed?html,js,output">JS Bin on jsbin.com</a><script src="http://static.jsbin.com/js/embed.min.js?3.35.5"></script>
+
 ## How to install
 ```bower install is-emitter```
 
