@@ -17,6 +17,7 @@ This implementation also provides an ability to classify events and split them b
   * [.emit(eventName, List)](#global.EventEmitter+emit)
   * [.getMaxListeners()](#global.EventEmitter+getMaxListeners)
   * [.setMaxListeners(number)](#global.EventEmitter+setMaxListeners)
+* [Angular JS Example](#angular-example)
 
 <a name="new_global.EventEmitter_new"></a>
 #### new EventEmitter()
@@ -168,6 +169,7 @@ Method allows to set max listeners count
 | --- | --- | --- |
 | number | <code>number</code> | of max listeners count |
 
+<a name="angular-example"></a>
 ## Angular Example
 
 ```javascript
