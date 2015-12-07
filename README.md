@@ -241,4 +241,6 @@ Method allows to set max listeners count
 
 ```
 
+Use [jsbin](http://jsbin.com/xezuvowozo/edit?html,js,output) to see the example of using EventEmitter with angular routes  
+
 ## DOCS IN PROGRESS))
