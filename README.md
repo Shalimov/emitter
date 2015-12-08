@@ -5,7 +5,7 @@
 
 ## What for?
 It's a simple implementation of event emitter that helps you to implement observers in your application.
-This implementation also provide ability to classify event and split them by several groups.
+This implementation also provides an ability to classify events and split them by several groups.
 
 ## Lets go:
 
@@ -17,6 +17,7 @@ This implementation also provide ability to classify event and split them by sev
   * [.emit(eventName, List)](#global.EventEmitter+emit)
   * [.getMaxListeners()](#global.EventEmitter+getMaxListeners)
   * [.setMaxListeners(number)](#global.EventEmitter+setMaxListeners)
+* [Angular JS Example](#angular-example)
 
 <a name="new_global.EventEmitter_new"></a>
 #### new EventEmitter()
@@ -168,6 +169,7 @@ Method allows to set max listeners count
 | --- | --- | --- |
 | number | <code>number</code> | of max listeners count |
 
+<a name="angular-example"></a>
 ## Angular Example
 
 ```javascript
@@ -240,5 +242,7 @@ Method allows to set max listeners count
 })(angular, EventEmitter);
 
 ```
+
+Use [jsbin](http://jsbin.com/xezuvowozo/edit?html,js,output) to see the example of using EventEmitter with angular routes  
 
 ## DOCS IN PROGRESS))
