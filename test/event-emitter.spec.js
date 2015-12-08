@@ -1,4 +1,4 @@
-var EventEmitter = require('../src/event-emitter');
+var EventEmitter = require('../dist/event-emitter');
 var sinon = require('sinon');
 
 describe('EventEmitter spec', function () {

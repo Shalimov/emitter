@@ -71,8 +71,8 @@
     this._groups = {};
     this._eventMap = {};
     this._registredListenersCount = 0;
-    this._maxListeners = settings.maxListeners || 20;
-    this._logger = settings.logger || console;
+    this._maxListeners = settings.maxListeners || 10;
+    this._logger = settings.logger;
   }
 
   _.extend(EventEmitter.prototype, {
@@ -107,6 +107,12 @@
       }
 
       this._registredListenersCount++;
+
+      if (this._registredListenersCount > this._maxListeners && this._logger) {
+        this._logger('Potentially memory leak was detected, max listeners count [' + this._maxListeners +
+          '], registred [' + this._registredListenersCount + ']'
+        );
+      }
     },
 
     _off: function (eventName, handler) {
@@ -128,6 +134,8 @@
     },
 
     _offEventGroup: function (event, group) {
+      if (!this._groups[group] || !this._eventMap[event]) return;
+
       var beforeLength = this._eventMap[event].length;
       this._eventMap[event] = this._eventMap[event].filter(_.notGroup, group);
       var afterLength = this._eventMap[event].length;
@@ -138,6 +146,8 @@
     },
 
     _offGroup: function (group) {
+      if (!this._groups[group]) return;
+
       var groupEvents = _.arrayCopy(this._groups[group]);
 
       groupEvents.forEach(function (event) {
@@ -148,7 +158,7 @@
     },
 
     _offEvent: function (event, handler) {
-      if (typeof handler === 'function') {
+      if (typeof handler === 'function' && this._eventMap[event]) {
         var handlerIndex = _.indexOf(this._eventMap[event], function (meta) {
           return meta.handler === handler;
         });
@@ -157,7 +167,7 @@
           this._eventMap[event].splice(handlerIndex, 1);
         }
         this._registredListenersCount--;
-      } else {
+      } else if (this._eventMap[event]) {
         var length = this._eventMap[event].length;
 
         this._eventMap[event].forEach(function (meta) {
