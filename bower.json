@@ -1,11 +1,11 @@
 {
   "name": "is-emitter",
-  "version": "0.8.2",
+  "description": "Event Emitter for your FE with groups",
+  "version": "0.8.3",
   "homepage": "https://github.com/Shalimov/emitter",
   "authors": [
     "Shalimov <Shalimich@gmail.com>"
   ],
-  "description": "Event Emitter for your FE with groups",
   "main": "dist/event-emitter.min.js",
   "keywords": [
     "Events",
