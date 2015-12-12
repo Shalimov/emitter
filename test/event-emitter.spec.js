@@ -119,6 +119,23 @@ describe('EventEmitter spec', function () {
     spyHandler.calledThrice.should.be.True();
   });
 
+  it('should have ability to stop event spreading inside handler', function () {
+    eventEmitter.on('event', function () {
+      spyHandler();
+      this.stop();
+    });
+
+    eventEmitter.on('event', spyHandler);
+    eventEmitter.on('event', spyHandler);
+    eventEmitter.on('event', spyHandler);
+
+    eventEmitter.emit('event');
+    eventEmitter.emit('event');
+    eventEmitter.emit('event');
+
+    spyHandler.calledThrice.should.be.True();
+  });
+
   it('should override #toString and #toString should return [object EventEmitter]', function () {
     eventEmitter.toString().should.be.eql('[object EventEmitter]');
   });
