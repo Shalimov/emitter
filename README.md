@@ -17,6 +17,7 @@ This implementation also provides an ability to classify events and split them b
   * [.emit(eventName, List)](#global.EventEmitter+emit)
   * [.getMaxListeners()](#global.EventEmitter+getMaxListeners)
   * [.setMaxListeners(number)](#global.EventEmitter+setMaxListeners)
+* [```this``` inside event handler](#this-inside)
 * [Angular JS Example](#angular-example)
 
 <a name="new_global.EventEmitter_new"></a>
