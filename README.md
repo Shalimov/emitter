@@ -45,23 +45,23 @@ Method provide ability to subscribe on some event(s) by name and react on it(the
  
  //register event
  emitter.on('event1', function (a, b) {
-  console.log('event1 : a + b: ' + (a + b)); 
+  console.log(this.event + ' : a + b: ' + (a + b)); 
  });
  
  //register several events
  emitter.on(['event2', 'event3'], function (a, b) { 
-  console.log('event23: a + b: ' + (a + b)); 
+  console.log(this.event + ' : a + b: ' + (a + b)); 
  });
  
  emitter.emit('event1', 1, 2);
  //result: 'event1 : a + b: 3'
  
  emitter.emit('event2', 4, 5);
- //result: 'event23: a + b: 9'
+ //result: 'event2 : a + b: 9'
  
  //register event that is specially defined by using group name
  emitter.on('event4.somegroup', function () {
-  console.log('event4.somegroup was emitted');
+  console.log(this.event + '.' +  this.group + 'was emitted');
  });
  
  emitter.emit('event4');
@@ -69,14 +69,14 @@ Method provide ability to subscribe on some event(s) by name and react on it(the
  
  //register group of event + classified them by using diff group names
  emitter.on(['event2.group1', 'event3.group2'], function (a, b) { 
-   console.log('event2 or event3'); 
+   console.log(this.event); 
  });
  
  emitter.emit('event2');
- //result: 'event2 or event3'
+ //result: 'event2'
  
  emitter.emit('event3');
- //result: 'event2 or event3'
+ //result: 'event3'
 ```
 
 <a name="global.EventEmitter+off"></a>
@@ -108,7 +108,7 @@ emitter.off(['event1', 'event2']);
 
 //Register classified events
 emitter.on(['e1.group1', 'e2.group1', 'e3.group2', 'e4'], function () {
- console.log('e1,e2,e3,e4');
+ console.log(this.event);
 });
 
 //Remove all events with .group1 classifier
@@ -168,6 +168,53 @@ Method allows to set max listeners count
 | Param | Type | Description |
 | --- | --- | --- |
 | number | <code>number</code> | of max listeners count |
+
+<a name="this-inside"></a>
+## ```this``` inside event handler
+
+Explanation: 
+```javascript
+var ee = new EventEmitter();
+
+ee.on('event', function () {
+ this.event; //event -> string (name of event)
+ this.group; //group -> string (name of group)
+ this.stop; //stop -> function (method stops event propagation to other handlers)
+});
+
+```
+
+Stop Example:
+```javascript
+var ee = new EventEmitter();
+
+var counter = 1;
+var handler = function () {
+ console.log('Counter:HELLO');
+ if(counter > 2) {
+  counter = 1;
+  this.stop();
+ }
+ counter++;
+};
+
+ee.on('event', handler);
+ee.on('event', handler);
+ee.on('event', handler);
+ee.on('event', handler);
+ee.on('event', handler);
+ee.on('event', handler);
+
+ee.emit('event'); // => results:
+//'Counter:HELLO'
+//'Counter:HELLO'
+
+ee.emit('event'); // => results:
+//'Counter:HELLO'
+//'Counter:HELLO'
+
+ee.off('event');
+```
 
 <a name="angular-example"></a>
 ## Angular Example
