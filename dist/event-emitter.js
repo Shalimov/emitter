@@ -150,7 +150,7 @@
 
       var groupEvents = _.arrayCopy(this._groups[group]);
 
-      groupEvents.forEach(function (event) {
+      _.each(groupEvents, function (event) {
         this._offEventGroup(event, group);
       }, this);
 
@@ -170,7 +170,7 @@
       } else if (this._eventMap[event]) {
         var length = this._eventMap[event].length;
 
-        this._eventMap[event].forEach(function (meta) {
+        _.each(this._eventMap[event], function (meta) {
           if (!meta.group) return;
 
           var group = this._groups[meta.group];
@@ -207,17 +207,28 @@
         }
       },
 
-            once: function (eventNameList, handler) {
+            many: function (eventNameList, handler, times) {
         var self = this;
+        var counter = 0;
+        times = (times < 1 || times) ? 1 : times;
+
         self.on(eventNameList, decorator);
 
         function decorator() {
           try {
             handler.apply(this, arguments);
           } finally {
-            self.off(eventNameList, decorator);
+            counter++;
+
+            if (times <= counter) {
+              self.off(eventNameList, decorator);
+            }
           }
         }
+      },
+
+            once: function (eventNameList, handler) {
+        this.many(eventNameList, handler, 1);
       },
 
             emit: function (eventName) {

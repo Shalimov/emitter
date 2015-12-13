@@ -52,6 +52,20 @@ describe('EventEmitter spec', function () {
   });
 
 
+  it('should register event for only two-time invocation by using #many, triggers event by using #emit and check invocation by #emit again', function () {
+    eventEmitter.many('some:event', spyHandler, 2);
+    spyHandler.called.should.be.False();
+
+    eventEmitter.emit('some:event');
+    spyHandler.calledOnce.should.be.True();
+
+    eventEmitter.emit('some:event');
+    spyHandler.calledTwice.should.be.True();
+
+    eventEmitter.emit('some:event');
+    spyHandler.calledTwice.should.be.True();
+  });
+
   it('should provide ability to register handler on several events', function () {
     eventEmitter.on(['event1', 'event2', 'event3'], spyHandler);
 
