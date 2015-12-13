@@ -239,7 +239,7 @@
       many: function (eventNameList, handler, times) {
         var self = this;
         var counter = 0;
-        times = (times < 1 || times) ? 1 : times;
+        times = times < 1 || typeof times !== 'number' ? 1 : times;
 
         self.on(eventNameList, decorator);
 
@@ -248,7 +248,6 @@
             handler.apply(this, arguments);
           } finally {
             counter++;
-
             if (times <= counter) {
               self.off(eventNameList, decorator);
             }
