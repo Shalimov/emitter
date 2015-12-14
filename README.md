@@ -14,6 +14,7 @@ This implementation also provides an ability to classify events and split them b
   * [.on(eventNameList, handler)](#global.EventEmitter+on)
   * [.off(evenNameList, [handler])](#global.EventEmitter+off)
   * [.once(eventNameList, handler)](#global.EventEmitter+once)
+  * [.many(eventNameList, handler, times)](#global.EventEmitter+many)
   * [.emit(eventName, List)](#global.EventEmitter+emit)
   * [.getMaxListeners()](#global.EventEmitter+getMaxListeners)
   * [.setMaxListeners(number)](#global.EventEmitter+setMaxListeners)
@@ -134,7 +135,7 @@ emitter.emit('e1');
 
 <a name="global.EventEmitter+once"></a>
 #### eventEmitter.once(eventNameList, handler)
-Methods allows you to subscribe on some event(s) and remove subscription automatically after event(s) will happen
+Methods allows you to subscribe on some event(s) and remove subscription automatically after event(s) will happen (one time)
 
 **Kind**: instance method of <code>[EventEmitter](#global.EventEmitter)</code>  
 
@@ -142,6 +143,18 @@ Methods allows you to subscribe on some event(s) and remove subscription automat
 | --- | --- |
 | eventNameList | <code>string</code> &#124; <code>Array</code> | 
 | handler | <code>function</code> | 
+
+<a name="global.EventEmitter+many"></a>
+#### eventEmitter.many(eventNameList, handler, times)
+Methods allows you to subscribe on some event(s) and remove subscription automatically after event(s) will happen (several times)
+
+**Kind**: instance method of <code>[EventEmitter](#global.EventEmitter)</code>  
+
+| Param | Type |
+| --- | --- |
+| eventNameList | <code>string</code> &#124; <code>Array</code> | 
+| handler | <code>function</code> |
+| times | <code>number</code> | 
 
 <a name="global.EventEmitter+emit"></a>
 #### eventEmitter.emit(eventName, List)
