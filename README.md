@@ -142,7 +142,23 @@ Methods allows you to subscribe on some event(s) and remove subscription automat
 | Param | Type |
 | --- | --- |
 | eventNameList | <code>string</code> &#124; <code>Array</code> | 
-| handler | <code>function</code> | 
+| handler | <code>function</code> |
+
+### Example:
+```javascript
+var eventEmitter = new EventEmitter();
+var counter = 0;
+
+eventEmitter.once('event', function () {
+ counter++;
+});
+
+eventEmitter.emit('event');
+eventEmitter.emit('event');
+eventEmitter.emit('event');
+
+console.log(counter); // => 1
+```
 
 <a name="global.EventEmitter+many"></a>
 #### eventEmitter.many(eventNameList, handler, times)
@@ -155,6 +171,23 @@ Methods allows you to subscribe on some event(s) and remove subscription automat
 | eventNameList | <code>string</code> &#124; <code>Array</code> | 
 | handler | <code>function</code> |
 | times | <code>number</code> | 
+
+### Example:
+```javascript
+var eventEmitter = new EventEmitter();
+var counter = 0;
+
+eventEmitter.many('event', function () {
+ counter++;
+}, 2);
+
+eventEmitter.emit('event');
+eventEmitter.emit('event');
+eventEmitter.emit('event');
+eventEmitter.emit('event');
+
+console.log(counter); // => 2
+```
 
 <a name="global.EventEmitter+emit"></a>
 #### eventEmitter.emit(eventName, List)
