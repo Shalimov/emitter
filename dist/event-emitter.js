@@ -72,10 +72,49 @@
     this._eventMap = {};
     this._registredListenersCount = 0;
     this._maxListeners = settings.maxListeners || 10;
-    this._logger = settings.logger;
+    this._logger = settings.logger || console.warn.bind(console);
+    this._emit = settings.async ? this._emitAsync : this._emitSync;
+    this._asyncQueue = settings.async ? [] : null;
+  }
+
+  function callEmit(args) {
+    this._emitSync.apply(this, args);
+  }
+
+  function timeoutCallback(self) {
+    self._asyncQueue.forEach(callEmit, self);
+    self._asyncQueue.length = 0;
   }
 
   _.extend(EventEmitter.prototype, {
+    _emitAsync: function (eventName) {
+      if (!this._asyncQueue.length) {
+        setTimeout(timeoutCallback, 0, this);
+      }
+
+      this._asyncQueue.push(arguments);
+    },
+
+    _emitSync: function (eventName) {
+      if (this._eventMap[eventName]) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        var stop = false;
+        var eventDescriptor = {
+          event: eventName,
+          group: null,
+          stop: function () {
+            stop = true;
+          }
+        };
+
+        _.each(this._eventMap[eventName], function (meta) {
+          eventDescriptor.group = meta.group;
+          meta.handler.apply(eventDescriptor, args);
+          return !stop;
+        }, this);
+      }
+    },
+
     _on: function (eventName, handler) {
       checkArgs(eventName, handler);
       var eventMap = this._eventMap;
@@ -230,24 +269,8 @@
         this.many(eventNameList, handler, 1);
       },
 
-            emit: function (eventName) {
-        if (this._eventMap[eventName]) {
-          var args = Array.prototype.slice.call(arguments, 1);
-          var stop = false;
-          var eventDescriptor = {
-            event: eventName,
-            group: null,
-            stop: function () {
-              stop = true;
-            }
-          };
-
-          _.each(this._eventMap[eventName], function (meta) {
-            eventDescriptor.group = meta.group;
-            meta.handler.apply(eventDescriptor, args);
-            return !stop;
-          }, this);
-        }
+            emit: function () {
+        this._emit.apply(this, arguments);
       },
 
             getMaxListeners: function () {

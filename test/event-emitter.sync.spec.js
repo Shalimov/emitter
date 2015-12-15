@@ -1,7 +1,7 @@
 var EventEmitter = require('../dist/event-emitter');
 var sinon = require('sinon');
 
-describe('EventEmitter spec', function () {
+describe('EventEmitter sync spec', function () {
   var eventEmitter;
   var spyHandler;
 
