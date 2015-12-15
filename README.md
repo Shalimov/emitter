@@ -15,7 +15,7 @@ This implementation also provides an ability to classify events and split them b
   * [.off(evenNameList, [handler])](#global.EventEmitter+off)
   * [.once(eventNameList, handler)](#global.EventEmitter+once)
   * [.many(eventNameList, handler, times)](#global.EventEmitter+many)
-  * [.emit(eventName, List)](#global.EventEmitter+emit)
+  * [.emit(eventName, List) => sync and async](#global.EventEmitter+emit)
   * [.getMaxListeners()](#global.EventEmitter+getMaxListeners)
   * [.setMaxListeners(number)](#global.EventEmitter+setMaxListeners)
 * [```this``` inside event handler](#this-inside)
@@ -27,7 +27,13 @@ EventEmitter - provides event-driven system
 
 ### Example:
 ```javascript
- var emitter = new EventEmitter();
+ var settings = {
+  maxListeners: 10, //10 listeners by default
+  async: false, //sync mode by default
+  logger: console.warn.bind(console) //console warn by default
+ };
+ 
+ var emitter = new EventEmitter(settings);
 ```
 
 <a name="global.EventEmitter+on"></a>
@@ -199,6 +205,41 @@ Method allows to trigger all handler which are subscribed on some event and also
 | --- | --- | --- |
 | eventName | <code>string</code> |  |
 | List | <code>arguments</code> | of arguments |
+
+### Example Sync and Async mode: 
+```javascript
+
+//sync mode example
+var ee = new EventEmitter();
+
+ee.on('event', function () {
+ console.log('hello world sync');
+});
+
+(function () {
+ ee.emit('event');
+ console.log('after hello world');
+})();
+//'hello world sync'
+//'after hello world'
+
+ee = null;
+//////////////////////////////////////////////////////////////////////////////
+//async mode example
+var ee = new EventEmitter({async: true});
+
+ee.on('event', function () {
+  console.log('hello world async');
+});
+
+(function () {
+ ee.emit('emit');
+ console.log('hello world here but happens before emit result');
+})();
+//'hello world here but happens before emit result'
+//'hello world async'
+
+```
 
 <a name="global.EventEmitter+getMaxListeners"></a>
 #### eventEmitter.getMaxListeners()
