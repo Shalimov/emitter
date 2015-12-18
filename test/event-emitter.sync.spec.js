@@ -111,7 +111,7 @@ describe('EventEmitter sync spec', function () {
 
     eventEmitter.off('.repeater');
 
-    eventEmitter.emit('event');
+    eventEmitter.trigger('event');
     eventEmitter.emit('event2');
     spyHandler.calledTwice.should.be.True();
   });
@@ -124,7 +124,7 @@ describe('EventEmitter sync spec', function () {
     eventEmitter.emit('event');
     spyHandler.calledTwice.should.be.True();
 
-    eventEmitter.off('event.repeater');
+    eventEmitter.removeEventListener('event.repeater');
 
     eventEmitter.emit('event');
     spyHandler.calledTwice.should.be.True();
@@ -134,12 +134,12 @@ describe('EventEmitter sync spec', function () {
   });
 
   it('should have ability to stop event spreading inside handler', function () {
-    eventEmitter.on('event', function () {
+    eventEmitter.addEventListener('event', function () {
       spyHandler();
       this.stop();
     });
 
-    eventEmitter.on('event', spyHandler);
+    eventEmitter.addEventListener('event', spyHandler);
     eventEmitter.on('event', spyHandler);
     eventEmitter.on('event', spyHandler);
 
