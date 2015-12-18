@@ -251,6 +251,8 @@
         } else {
           this._on(eventNameList, handler);
         }
+
+        return this;
       },
 
       /**
@@ -267,6 +269,8 @@
         } else {
           this._off(eventNameList, handler);
         }
+
+        return this;
       },
 
       /**
@@ -292,6 +296,8 @@
             }
           }
         }
+
+        return self;
       },
 
       /**
@@ -301,7 +307,7 @@
        * @param {function} handler
        */
       once: function (eventNameList, handler) {
-        this.many(eventNameList, handler, 1);
+        return this.many(eventNameList, handler, 1);
       },
 
       /**
@@ -311,7 +317,7 @@
        * @param {arguments} ... List of arguments
        */
       emit: function () {
-        this._emit.apply(this, arguments);
+        return this._emit.apply(this, arguments);
       },
 
       /**
@@ -338,6 +344,12 @@
         return '[object EventEmitter]';
       }
     });
+
+  _.extend(EventEmitter.prototype, {
+    addEventListeners: EventEmitter.prototype.on,
+    removeEventListeners: EventEmitter.prototype.off,
+    trigger: EventEmitter.prototype.emit
+  });
 
   if (typeof module !== 'undefined') {
     module.exports = EventEmitter;
