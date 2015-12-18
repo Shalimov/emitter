@@ -145,7 +145,7 @@ describe('EventEmitter sync spec', function () {
 
     eventEmitter.emit('event');
     eventEmitter.emit('event');
-    eventEmitter.emit('event');
+    eventEmitter.trigger('event');
 
     spyHandler.calledThrice.should.be.True();
   });
