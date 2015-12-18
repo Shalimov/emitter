@@ -295,8 +295,8 @@
     });
 
   _.extend(EventEmitter.prototype, {
-    addEventListeners: EventEmitter.prototype.on,
-    removeEventListeners: EventEmitter.prototype.off,
+    addEventListener: EventEmitter.prototype.on,
+    removeEventListener: EventEmitter.prototype.off,
     trigger: EventEmitter.prototype.emit
   });
 
