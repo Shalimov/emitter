@@ -37,7 +37,8 @@ EventEmitter - provides event-driven system
 ```
 
 <a name="global.EventEmitter+on"></a>
-#### eventEmitter.on(eventNameList, handler)
+#### eventEmitter.on(eventNameList, handler) === eventEmitter.addEventListener(eventNameList, handler)
+
 Method provide ability to subscribe on some event(s) by name and react on it(them) by handler
 
 **Kind**: instance method of <code>[EventEmitter](#global.EventEmitter)</code>  
@@ -88,7 +89,7 @@ Method provide ability to subscribe on some event(s) by name and react on it(the
 ```
 
 <a name="global.EventEmitter+off"></a>
-#### eventEmitter.off(evenNameList, [handler])
+#### eventEmitter.off(eventNameList, [handler]) === eventEmitter.removeEventListener(eventNameList, [handler])
 Method allows to remove events from eventEmitter by eventName, eventName.group, .group, eventNameList
 
 **Kind**: instance method of <code>[EventEmitter](#global.EventEmitter)</code>  
@@ -196,7 +197,7 @@ console.log(counter); // => 2
 ```
 
 <a name="global.EventEmitter+emit"></a>
-#### eventEmitter.emit(eventName, List)
+#### eventEmitter.emit(eventName, argumentsList) === eventEmitter.trigger(eventName, argumentsList)
 Method allows to trigger all handler which are subscribed on some event and also pass any number of arguments
 
 **Kind**: instance method of <code>[EventEmitter](#global.EventEmitter)</code>  
@@ -204,7 +205,7 @@ Method allows to trigger all handler which are subscribed on some event and also
 | Param | Type | Description |
 | --- | --- | --- |
 | eventName | <code>string</code> |  |
-| List | <code>arguments</code> | of arguments |
+| argumentsList | <code>arguments</code> | of arguments |
 
 ### Example Sync and Async mode: 
 ```javascript
