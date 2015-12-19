@@ -37,7 +37,8 @@ EventEmitter - provides event-driven system
 ```
 
 <a name="global.EventEmitter+on"></a>
-#### eventEmitter.on(eventNameList, handler) === eventEmitter.addEventListener(eventNameList, handler)
+#### eventEmitter.on(eventNameList, handler)
+#### eventEmitter.addEventListener(eventNameList, handler)
 
 Method provide ability to subscribe on some event(s) by name and react on it(them) by handler
 
@@ -89,7 +90,8 @@ Method provide ability to subscribe on some event(s) by name and react on it(the
 ```
 
 <a name="global.EventEmitter+off"></a>
-#### eventEmitter.off(eventNameList, [handler]) === eventEmitter.removeEventListener(eventNameList, [handler])
+#### eventEmitter.off(eventNameList, [handler])
+#### eventEmitter.removeEventListener(eventNameList, [handler])
 Method allows to remove events from eventEmitter by eventName, eventName.group, .group, eventNameList
 
 **Kind**: instance method of <code>[EventEmitter](#global.EventEmitter)</code>  
@@ -197,7 +199,8 @@ console.log(counter); // => 2
 ```
 
 <a name="global.EventEmitter+emit"></a>
-#### eventEmitter.emit(eventName, argumentsList) === eventEmitter.trigger(eventName, argumentsList)
+#### eventEmitter.emit(eventName, argumentsList)
+#### eventEmitter.trigger(eventName, argumentsList)
 Method allows to trigger all handler which are subscribed on some event and also pass any number of arguments
 
 **Kind**: instance method of <code>[EventEmitter](#global.EventEmitter)</code>  
