@@ -77,12 +77,12 @@
     this._asyncQueue = settings.async ? [] : null;
   }
 
-  function callEmit(args) {
+  function applyEmit(args) {
     this._emitSync.apply(this, args);
   }
 
   function timeoutCallback(self) {
-    self._asyncQueue.forEach(callEmit, self);
+    self._asyncQueue.forEach(applyEmit, self);
     self._asyncQueue.length = 0;
   }
 

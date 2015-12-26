@@ -1,6 +1,6 @@
 {
   "name": "is-emitter",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Event Emitter for your FE with event groups",
   "main": "event-emitter.js",
   "directories": {
