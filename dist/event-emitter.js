@@ -13,7 +13,7 @@
 
       if (Array.isArray(collection)) {
         for (i = 0, length = collection.length; i < length; i++) {
-          if (iterator.call(ctx, collection[i], i, collection) === false) {
+          if (iterator.call(ctx, collection[i], i, collection) === true) {
             break;
           }
         }
@@ -22,7 +22,7 @@
 
         for (i = 0, length = keys.length; i < length; i++) {
           var key = keys[i];
-          if (iterator.call(ctx, collection[key], key, collection) === false) {
+          if (iterator.call(ctx, collection[key], key, collection) === true) {
             break;
           }
         }
@@ -41,7 +41,7 @@
       this.each(collection, function (val, i, coll) {
         if (iterator(val, i, coll)) {
           index = i;
-          return false;
+          return true;
         }
       });
 
@@ -110,7 +110,7 @@
         _.each(this._eventMap[eventName], function (meta) {
           eventDescriptor.group = meta.group;
           meta.handler.apply(eventDescriptor, args);
-          return !stop;
+          return stop;
         }, this);
       }
     },
