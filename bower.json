@@ -1,7 +1,7 @@
 {
   "name": "is-emitter",
   "description": "Event Emitter for your FE with groups",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "homepage": "https://github.com/Shalimov/emitter",
   "authors": [
     "Shalimov <Shalimich@gmail.com>"
