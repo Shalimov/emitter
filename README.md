@@ -248,6 +248,26 @@ ee.on('event', function () {
 
 ```
 
+<a name="#global.EventEmitter+group"></a>
+#### eventEmitter.group(groupName)
+Method allows to create a simple helper to register and unregister events for specific group
+
+### Example
+```javascript
+var ee = new EventEmitter();
+
+var someGroup = ee.group('some-group');
+someGroup.on('event1', function () {
+ console.log('handler of some-group event1');
+});
+
+ee.emit('event1');
+//result -> 'handler of some-group event1'
+
+someGroup.off(); //remove all handler for all events for some-group
+
+```
+
 <a name="global.EventEmitter+getMaxListeners"></a>
 #### eventEmitter.getMaxListeners()
 Method allows to get max listeners count
