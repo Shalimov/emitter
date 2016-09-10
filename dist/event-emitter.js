@@ -11,13 +11,7 @@
     each: function (collection, iterator, ctx) {
       var i, length;
 
-      if (Array.isArray(collection)) {
-        for (i = 0, length = collection.length; i < length; i++) {
-          if (iterator.call(ctx, collection[i], i, collection) === true) {
-            break;
-          }
-        }
-      } else if (typeof collection === 'object') {
+      if (typeof collection === 'object' || typeof collection === 'string') {
         var keys = Object.keys(collection);
 
         for (i = 0, length = keys.length; i < length; i++) {
@@ -298,6 +292,42 @@
     addEventListener: EventEmitter.prototype.on,
     removeEventListener: EventEmitter.prototype.off,
     trigger: EventEmitter.prototype.emit
+  });
+
+
+  function GroupAPI(eventEmitter, group) {
+    this.eventEmitter = eventEmitter;
+    this.group = group.charAt(0) !== '.' ? '.' + group : group;
+  }
+
+  _.extend(GroupAPI.prototype, {
+    on: function (eventNameList, handler) {
+      var transformedEvenList;
+
+      if (Array.isArray(eventNameList)) {
+        transformedEvenList = eventNameList.map(function (eventName) {
+          return eventName + this.group;
+        }, this);
+      } else {
+        transformedEvenList = eventNameList + this.group;
+      }
+
+      this.eventEmitter.on(transformedEvenList, handler);
+    },
+
+    emit: function () {
+      this.eventEmitter.emit.apply(this.eventEmitter, arguments);
+    },
+
+    off: function () {
+      this.eventEmitter.off(this.group);
+    }
+  });
+
+  _.extend(EventEmitter.prototype, {
+    group: function (group) {
+      return new GroupAPI(this, group);
+    }
   });
 
   if (typeof module !== 'undefined') {

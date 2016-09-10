@@ -27,13 +27,21 @@ describe('EventEmitter sync spec', function () {
 
   it('should register event by using #on, triggers event with args by using #emit and unregister event by #off', function () {
     eventEmitter.on('some:event', spyHandler);
-    eventEmitter.emit('some:event', ['args1', 'args2'], {key: 'value'});
+    eventEmitter.emit('some:event', ['args1', 'args2'], {
+      key: 'value'
+    });
     spyHandler.calledOnce.should.be.True();
-    spyHandler.getCall(0).args.should.match([['args1', 'args2'], {key: 'value'}]);
+    spyHandler.getCall(0)
+      .args.should.match([
+        ['args1', 'args2'], {
+          key: 'value'
+        }
+      ]);
 
     eventEmitter.emit('some:event', 1, 2, 3, 4);
     spyHandler.calledTwice.should.be.True();
-    spyHandler.getCall(1).args.should.match([1, 2, 3, 4]);
+    spyHandler.getCall(1)
+      .args.should.match([1, 2, 3, 4]);
 
     eventEmitter.off('some:event');
     eventEmitter.emit('some:event');
@@ -151,6 +159,28 @@ describe('EventEmitter sync spec', function () {
   });
 
   it('should override #toString and #toString should return [object EventEmitter]', function () {
-    eventEmitter.toString().should.be.eql('[object EventEmitter]');
+    eventEmitter.toString()
+      .should.be.eql('[object EventEmitter]');
+  });
+
+  /* NCH */
+  describe('Group API spec', function () {
+    it('should have method #group and create', function () {
+      var g1 = eventEmitter.group('group1');
+      g1.on('event', spyHandler);
+
+      spyHandler.called.should.be.False();
+
+      g1.emit('event');
+
+      spyHandler.calledOnce.should.be.True();
+
+      g1.off();
+
+      g1.emit('event');
+
+      spyHandler.calledOnce.should.be.True();
+      spyHandler.calledTwice.should.be.False();
+    });
   });
 });

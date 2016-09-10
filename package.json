@@ -1,8 +1,12 @@
 {
-  "name": "is-emitter",
-  "version": "1.0.3",
+  "name": "isemitter",
+  "version": "1.0.5",
   "description": "Event Emitter for your FE with event groups",
   "main": "event-emitter.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Shalimov/emitter.git"
+  },
   "directories": {
     "test": "test"
   },
@@ -16,9 +20,32 @@
     "sinon": "^1.17.2"
   },
   "scripts": {
-    "test": "mocha",
+    "build": "gulp",
+    "test": "gulp && ./node_modules/mocha/bin/mocha --require should --recursive",
     "upDocs": "jsdoc2md event-emitter.js > README.md && git add . && git commit -am 'Updated Readme.md' && git push origin master"
   },
-  "author": "",
+  "homepage": "https://github.com/Shalimov/emitter",
+  "keywords": [
+    "pubsub",
+    "emitter",
+    "listener",
+    "observer",
+    "trigger",
+    "events",
+    "event",
+    "angular",
+    "client",
+    "groups",
+    "event-driven",
+    "flow",
+    "event-emitter",
+    "eventemitter",
+    "signal",
+    "fire",
+    "catch",
+    "handle",
+    "listener"
+  ],
+  "author": "Igor Shalimov",
   "license": "ISC"
 }
