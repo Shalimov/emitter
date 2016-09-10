@@ -1,7 +1,9 @@
 # Simple EventEmitter for your FE(mb BE)
 
 ## How to install
-```bower install --save is-emitter```
+```npm install -S isemitter```
+
+```bower install -S is-emitter```
 
 ## What for?
 It's a simple implementation of event emitter that helps you to implement observers in your application.
@@ -18,6 +20,7 @@ This implementation also provides an ability to classify events and split them b
   * [.emit(eventName, List) => sync and async](#global.EventEmitter+emit)
   * [.getMaxListeners()](#global.EventEmitter+getMaxListeners)
   * [.setMaxListeners(number)](#global.EventEmitter+setMaxListeners)
+  * [.group(groupName) //#new](#global.EventEmitter+group)
 * [```this``` inside event handler](#this-inside)
 * [Angular JS Example](#angular-example)
 
