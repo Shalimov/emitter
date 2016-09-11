@@ -248,7 +248,7 @@ ee.on('event', function () {
 
 ```
 
-<a name="#global.EventEmitter+group"></a>
+<a name="global.EventEmitter+group"></a>
 #### eventEmitter.group(groupName)
 Method allows to create a simple helper to register and unregister events for specific group
 
