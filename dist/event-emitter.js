@@ -3,7 +3,7 @@
 
   function checkArgs(str, fn) {
     if (typeof str !== 'string' || typeof fn !== 'function') {
-      throw new Error('First param should be a String, Second parameter should be an function');
+      throw new Error('First param should be a String, Second parameter should be a function');
     }
   }
 
@@ -27,6 +27,16 @@
       this.each(source, function (val, key) {
         dest[key] = val;
       });
+    },
+
+    inherits: function inherits(Child, Parent) {
+      Child.prototype = Object.create(Parent.prototype, {
+        constructor: {
+          value: Child
+        }
+      });
+
+      Child._super = Parent.prototype;
     },
 
     indexOf: function (collection, iterator) {
@@ -273,6 +283,14 @@
         return this._emit.apply(this, arguments);
       },
 
+            hasEvent: function (eventName) {
+        return this._eventMap.hasOwnProperty(eventName);
+      },
+
+            hasGroup: function (groupName) {
+        return this._groups.hasOwnProperty(groupName);
+      },
+
             getMaxListeners: function () {
         return this._maxListeners;
       },
@@ -294,6 +312,11 @@
     trigger: EventEmitter.prototype.emit
   });
 
+  _.extend(EventEmitter, {
+    isEventEmitter: function (obj) {
+      return obj instanceof EventEmitter;
+    }
+  });
 
   function GroupAPI(eventEmitter, group) {
     this.eventEmitter = eventEmitter;
@@ -330,11 +353,48 @@
     }
   });
 
+    function ExtendedEventEmitter() {
+    EventEmitter.call(this);
+
+    this._before = new EventEmitter();
+    this._after = new EventEmitter();
+  }
+
+  _.inherits(ExtendedEventEmitter, EventEmitter);
+
+  _.extend(ExtendedEventEmitter.prototype, {
+    before: function () {
+      this._before.on.apply(this._before, arguments);
+    },
+
+    after: function () {
+      this._after.on.apply(this._after, arguments);
+    },
+
+    offBefore: function () {
+      this._before.off.apply(this._before, arguments);
+    },
+
+    offAfter: function () {
+      this._after.off.apply(this._after, arguments);
+    },
+
+    _emitSync: function (eventName) {
+      if(!this.hasEvent(eventName)) {
+          return;
+      }
+
+      this._before.emit(eventName);
+      this.constructor._super._emitSync.apply(this, arguments);
+      this._after.emit(eventName);
+    }
+  });
+
   if (typeof module !== 'undefined') {
-    module.exports = EventEmitter;
+    module.exports = ExtendedEventEmitter;
   } else if (typeof exports !== 'undefined') {
-    exports.EventEmitter = EventEmitter;
+    exports.EventEmitter = ExtendedEventEmitter;
   } else {
-    global.EventEmitter = EventEmitter;
+    global.EventEmitter = ExtendedEventEmitter;
   }
 })(new Function('return this')());

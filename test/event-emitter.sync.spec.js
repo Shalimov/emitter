@@ -158,6 +158,115 @@ describe('EventEmitter sync spec', function () {
     spyHandler.calledThrice.should.be.True();
   });
 
+  it('should have to check whether event exists or not', function () {
+    eventEmitter.on('event', spyHandler);
+
+    eventEmitter.hasEvent('event')
+      .should.be.True();
+    eventEmitter.hasEvent('event2')
+      .should.be.False();
+  });
+
+  it('should have to check whether group exists or not', function () {
+    eventEmitter.on('event.g1', spyHandler);
+
+    eventEmitter.hasGroup('g1')
+      .should.be.True();
+    eventEmitter.hasGroup('g2')
+      .should.be.False();
+  });
+
+  it('should be able to register "before" handlers that will be invoked before event handlers invocation', function () {
+
+    var beforeCounter = 0;
+
+    eventEmitter.on('event1', function () {
+      beforeCounter.should.be.eql(1);
+    });
+
+    eventEmitter.on('event2', function () {
+      beforeCounter.should.be.eql(2);
+    });
+
+    eventEmitter.before(['event1', 'event2'], function () {
+      beforeCounter += 1;
+    });
+
+    eventEmitter.emit('event1');
+    eventEmitter.emit('event2');
+  });
+
+  it('should be able to register "after" handlers that will be invoked before event handlers invocation', function () {
+    var afterCounter = 0;
+
+    eventEmitter.on('event1', function () {
+      afterCounter.should.be.eql(0);
+    });
+
+    eventEmitter.on('event2', function () {
+      afterCounter.should.be.eql(1);
+    });
+
+    eventEmitter.after(['event1', 'event2'], function () {
+      afterCounter += 1;
+    });
+
+    eventEmitter.emit('event1');
+    eventEmitter.emit('event2');
+
+    afterCounter.should.be.eql(2);
+  });
+
+  it('should be able to unregister "after" and "before" handlers', function () {
+    var beforeCounter = 0;
+    var afterCounter = 0;
+
+    var expectedCounterValue = 2;
+
+    eventEmitter.on('event1', function () {
+      beforeCounter.should.be.eql(1);
+      afterCounter.should.be.eql(0);
+    });
+
+    eventEmitter.on('event2', function () {
+      beforeCounter.should.be.eql(2);
+      afterCounter.should.be.eql(1);
+    });
+
+    eventEmitter.before(['event1', 'event2'], function () {
+      beforeCounter += 1;
+    });
+
+    eventEmitter.after(['event1', 'event2'], function () {
+      afterCounter += 1;
+    });
+
+    eventEmitter.emit('event1');
+    eventEmitter.emit('event2');
+
+    afterCounter.should.be.eql(2);
+
+    eventEmitter.offBefore(['event1', 'event2']);
+    eventEmitter.offAfter(['event1', 'event2']);
+    eventEmitter.off(['event1', 'event2']);
+
+    eventEmitter.on('event1', function () {
+      beforeCounter.should.be.eql(2);
+      afterCounter.should.be.eql(2);
+    });
+
+    eventEmitter.on('event2', function () {
+      beforeCounter.should.be.eql(2);
+      afterCounter.should.be.eql(2);
+    });
+
+    eventEmitter.emit('event1');
+    eventEmitter.emit('event2');
+
+    beforeCounter.should.be.eql(2);
+    afterCounter.should.be.eql(2);
+  });
+
   it('should override #toString and #toString should return [object EventEmitter]', function () {
     eventEmitter.toString()
       .should.be.eql('[object EventEmitter]');

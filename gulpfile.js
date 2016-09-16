@@ -1,6 +1,7 @@
-var uglify = require('gulp-uglify');
-var rename = require('gulp-rename');
 var gulp = require('gulp');
+var rename = require('gulp-rename');
+var uglify = require('gulp-uglify');
+// var sourcemaps = require('gulp-sourcemaps');
 var strip = require('gulp-strip-comments');
 
 gulp.task('default', function () {

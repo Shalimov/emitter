@@ -1,6 +1,6 @@
 {
   "name": "isemitter",
-  "version": "1.0.6",
+  "version": "1.1.1",
   "description": "Event Emitter for your FE with event groups",
   "main": "event-emitter.js",
   "repository": {
@@ -13,11 +13,13 @@
   "devDependencies": {
     "gulp": "^3.9.0",
     "gulp-rename": "^1.2.2",
+    "gulp-sourcemaps": "^1.6.0",
     "gulp-strip-comments": "^1.0.1",
     "gulp-uglify": "^1.5.1",
     "mocha": "^2.3.3",
     "should": "^7.1.1",
-    "sinon": "^1.17.2"
+    "sinon": "^1.17.2",
+    "vinyl-buffer": "^1.0.0"
   },
   "scripts": {
     "build": "gulp",
