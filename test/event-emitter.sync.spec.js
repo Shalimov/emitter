@@ -274,22 +274,40 @@ describe('EventEmitter sync spec', function () {
 
   /* NCH */
   describe('Group API spec', function () {
-    it('should have method #group and create', function () {
+    it('should have method #group and create group with ability to be deleted', function () {
       var g1 = eventEmitter.group('group1');
       g1.on('event', spyHandler);
+      g1.on('event1', spyHandler);
 
       spyHandler.called.should.be.False();
 
       g1.emit('event');
+      eventEmitter.emit('event1');
 
-      spyHandler.calledOnce.should.be.True();
+      spyHandler.calledTwice.should.be.True();
+
+      g1.off('event');
+
+      eventEmitter.emit('event');
+      g1.emit('event1');
+
+      spyHandler.calledThrice.should.be.True();
+    });
+
+    it('should remove events only for specific group', function () {
+      var g1 = eventEmitter.group('group1');
+      g1.on('event', spyHandler);
+      eventEmitter.on('event', spyHandler);
+
+      eventEmitter.emit('event');
+
+      spyHandler.calledTwice.should.be.True();
 
       g1.off();
 
-      g1.emit('event');
+      eventEmitter.emit('event');
 
-      spyHandler.calledOnce.should.be.True();
-      spyHandler.calledTwice.should.be.False();
+      spyHandler.calledThrice.should.be.True();
     });
   });
 });

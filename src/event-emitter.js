@@ -385,15 +385,21 @@
   }
 
   _.extend(GroupAPI.prototype, {
+    _purify: function (eventName) {
+      return typeof eventName === 'string' ?
+        eventName.split('.')[0] :
+        eventName;
+    },
+    
     on: function (eventNameList, handler) {
       var transformedEvenList;
 
       if (Array.isArray(eventNameList)) {
         transformedEvenList = eventNameList.map(function (eventName) {
-          return eventName + this.group;
+          return this._purify(eventName) + this.group;
         }, this);
       } else {
-        transformedEvenList = eventNameList + this.group;
+        transformedEvenList = this._purify(eventNameList) + this.group;
       }
 
       this.eventEmitter.on(transformedEvenList, handler);
@@ -403,8 +409,19 @@
       this.eventEmitter.emit.apply(this.eventEmitter, arguments);
     },
 
-    off: function () {
-      this.eventEmitter.off(this.group);
+    off: function (eventNameList) {
+      var transformedEvenList;
+      eventNameList = eventNameList || '';
+
+      if (Array.isArray(eventNameList)) {
+        transformedEvenList = eventNameList.map(function (eventName) {
+          return this._purify(eventName) + this.group;
+        }, this);
+      } else {
+        transformedEvenList = this._purify(eventNameList) + this.group;
+      }
+
+      this.eventEmitter.off(transformedEvenList);
     }
   });
 
@@ -443,8 +460,8 @@
     },
 
     _emitSync: function (eventName) {
-      if(!this.hasEvent(eventName)) {
-          return;
+      if (!this.hasEvent(eventName)) {
+        return;
       }
 
       this._before.emit(eventName);

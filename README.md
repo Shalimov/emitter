@@ -343,7 +343,7 @@ ee.offAfter('.g1');
 ...
 ```
 
-<a name="#global.EventEmitter+group"></a>
+<a name="global.EventEmitter+group"></a>
 #### eventEmitter.group(groupName)
 Method allows to create a simple helper to register and unregister events for specific group
 
@@ -352,6 +352,11 @@ Method allows to create a simple helper to register and unregister events for sp
 var ee = new EventEmitter();
 
 var someGroup = ee.group('some-group');
+
+someGroup.on('event', function () {
+ console.log('handler of some-group event');
+});
+
 someGroup.on('event1', function () {
  console.log('handler of some-group event1');
 });
@@ -359,7 +364,10 @@ someGroup.on('event1', function () {
 ee.emit('event1');
 //result -> 'handler of some-group event1'
 
-someGroup.off(); //remove all handler for all events for some-group
+someGroup.off('event'); //remove handlers for 'event' for some-group
+//also possible cases:
+// someGroup.off() -> remove all events
+// someGroup.off(['event', 'event1']); // remove events by name
 
 ```
 
