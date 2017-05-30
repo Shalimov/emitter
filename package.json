@@ -2,7 +2,7 @@
   "name": "isemitter",
   "version": "1.1.2",
   "description": "Event Emitter for your FE with event groups",
-  "main": "event-emitter.js",
+  "main": "dist/event-emitter.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/Shalimov/emitter.git"
